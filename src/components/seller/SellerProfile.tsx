@@ -75,8 +75,6 @@ export default function SellerProfile() {
                         <p className={TEXT_STYLE}><strong>Social media: </strong> {seller?.social_media}</p>
                         {seller?.address &&
                             <p className={TEXT_STYLE}><strong>Address: </strong> {seller.address}</p>}
-                        {seller?.phone_number &&
-                            <p className={TEXT_STYLE}><strong>Phone number: </strong> {seller.phone_number}</p>}
                     </div>
                 </div>
             </Card>
