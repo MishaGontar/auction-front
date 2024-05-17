@@ -74,29 +74,27 @@ export default function Header() {
 
     useEffect(() => {
         if (!isLogin) {
-            console.log("User is not login")
             return;
         }
 
         if (user) {
-            console.log("User is already exist")
             return;
         }
 
-        console.log("Get user")
         axios.get(`${SERVER_URL}/user`, getAuthConfig())
             .then(response => {
-                console.log(response.data)
                 login(response.data)
             })
             .catch(e => console.error(e))
     }, [isLogin, login, user])
 
     function ifNotExistPush(url: string, menuItem: IMenuItem) {
-        const isExist = menuItems.find(m => m.href === url)
-        if (!isExist) {
-            setMenuItems(prevState => [...prevState, menuItem])
-        }
+        setMenuItems(prevState => {
+            if (menuItems.find(m => m.href.includes(url))) {
+                return prevState
+            }
+            return [...prevState, menuItem]
+        })
     }
 
     function logOut() {

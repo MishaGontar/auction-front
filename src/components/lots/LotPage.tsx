@@ -72,11 +72,9 @@ export default function LotPage() {
 
     const handleUpdatedBet = (json: string) => {
         const res = JSON.parse(json);
-        console.log(res)
         const newBets: IBet[] = res.bets;
         const winner: IWinner = res.winner;
         if (winner !== undefined && winner !== null && lot) {
-            console.warn("Update Lot")
             const updatedLot: ILotData = {
                 ...lot,
                 winner: winner
@@ -98,7 +96,6 @@ export default function LotPage() {
                     ? convertFormattedAmountToNumber(userAmount.amount)
                     : lot?.lot.lot_amount)
                 || 0
-            console.log(sendAmount)
             if (!lot?.is_owner && !userAmount.isMoreThanBet && bets.length > 0) {
                 return
             }
@@ -130,7 +127,6 @@ export default function LotPage() {
                     status: getInfoStatusById(lot.lot_status_id)
                 })
                 const initAmount = bets.length > 0 ? bets[0].amount : lot.lot_amount;
-                console.log(bets.length > 0 && (initAmount > bets[0].amount))
                 setUserAmount({
                     amount: formatNumberWithSpaces(initAmount.toString()),
                     isMoreThanBet: bets.length > 0 && (initAmount > bets[0].amount)

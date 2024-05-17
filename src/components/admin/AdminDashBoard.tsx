@@ -51,10 +51,7 @@ export default function AdminDashBoard() {
     function loadSellers() {
         setLoading(true);
         axios.get(`${SERVER_URL}/sellers`, getAdminAuthConfig())
-            .then(response => {
-                console.table(response.data.sellers)
-                setSellers(response.data.sellers)
-            })
+            .then(response => setSellers(response.data.sellers))
             .catch(error => console.log(error))
             .finally(() => setLoading(false));
     }
@@ -79,7 +76,6 @@ export default function AdminDashBoard() {
 
     const handleSelectionChange = (e: ChangeEvent<HTMLSelectElement>) => {
         const status: string[] = e.target.value.trim().split(',');
-        console.log(status)
         setStatusFilter(status)
     };
 
