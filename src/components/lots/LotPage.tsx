@@ -186,7 +186,7 @@ export default function LotPage() {
                         <CardBody className="pt-8">
                             <div className="flex justify-between">
                                 <small className="text-default-500 hover:cursor-pointer"
-                                       onClick={() => navigate(`/seller/${id}`)}>
+                                       onClick={() => navigate(`/seller/${lot.lot.seller_id}`)}>
                                     Seller: {lot.lot.seller_full_name}
                                 </small>
                                 <Chip color={lot.status.color} className="hover:cursor-default">
