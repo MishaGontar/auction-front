@@ -81,7 +81,7 @@ export default function AuctionPage() {
                 if (auction?.is_owner) {
                     setLots(response.data.lots)
                 } else {
-                    setLots(response.data.lots.filter((l: ILot) => l.status_id !== 3))
+                    setLots(response.data.lots.filter((l: ILot) => l.status_id !== 3 && l.status_id !== 2))
                 }
             })
             .catch(error => {
