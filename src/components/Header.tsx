@@ -152,7 +152,7 @@ export default function Header() {
                             <p className="font-semibold"> Signed in as {user?.username} </p>
                         </DropdownItem>
                         <DropdownItem key="settings"
-                                      href="/profile">
+                                      onClick={()=>navigator('/profile')}>
                             My Profile
                         </DropdownItem>
                         <DropdownItem key="settings"
