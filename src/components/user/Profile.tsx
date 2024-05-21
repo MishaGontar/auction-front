@@ -26,7 +26,7 @@ export default function Profile() {
         setIsLoading(true)
         axios.get(`${SERVER_URL}/user/bets`, getAuthConfig())
             .then(res => {
-                const userBets = res.data;
+                const userBets = res.data.bets;
                 let sortedBets;
                 if (userBets && userBets.length > 1) {
                     sortedBets = userBets.sort((a: IUserBet, b: IUserBet) => {
@@ -61,6 +61,7 @@ export default function Profile() {
                     <p className="text-3xl font-bold">Всі ваші ставки</p>
                 </CardHeader>
                 <CardBody>
+                    {!bets && <p className="text-center">Ви ще не ставили жодних ставок</p>}
                     {bets && bets.length > 0 && bets.map(bet => <UserBetCard key={bet.date_created} bet={bet}/>)}
                 </CardBody>
             </Card>

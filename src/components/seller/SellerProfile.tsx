@@ -57,6 +57,13 @@ export default function SellerProfile() {
                     <p className="text-3xl font-bold">Всі аукціони</p>
                 </CardHeader>
                 <CardBody>
+                    {auctions && auctions.length === 0 &&
+                        <p className="text-center">Ви ще не
+                            <strong className="text-blue-500 cursor-pointer"
+                                    onClick={() => navigator('/create/auction')}> створили </strong>
+                            жодного аукціону
+                        </p>
+                    }
                     {auctions && auctions.length > 0 &&
                         auctions.map(auction => <AuctionCard key={auction.auction_id} auction={auction}/>)}
                 </CardBody>

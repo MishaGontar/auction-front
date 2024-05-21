@@ -47,7 +47,7 @@ export default function LotPage() {
 
 
     useEffect(() => {
-        if(lot?.status.id === 3 && !lot.is_owner) {
+        if (lot?.status.id === 3 && !lot.is_owner) {
             sendErrorNotify("Не знайшли лот")
             navigate(`/auction/${lot?.lot.auction_id}`);
             return
@@ -291,7 +291,9 @@ export default function LotPage() {
                                 )}
                             </>)
                             }
-                            <TableBets bets={bets} is_owner={lot.is_owner} onDelete={handleDeleteBet}/>
+                            {bets.length === 0 && <p className="text-center">Поки немає ставок</p>}
+                            {bets.length > 0 &&
+                                <TableBets bets={bets} is_owner={lot.is_owner} onDelete={handleDeleteBet}/>}
                         </CardBody>
                     </Card>
                 </div>
