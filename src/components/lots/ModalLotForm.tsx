@@ -335,7 +335,7 @@ export default function ModalLotForm({isOpen, auction, onSubmit, closeModal, lot
                                     type="submit"
                                     color="success"
                             >
-                                {lot ? "Оновити" : "Створити новий"} лот
+                                {lot ? "Оновити" : "Зберегти"} лот
                             </Button>
                         </ModalFooter>
                     </form>

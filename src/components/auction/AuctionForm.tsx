@@ -57,7 +57,7 @@ export default function AuctionForm() {
 
     useEffect(() => {
         setIsLoading(true)
-        document.title = 'Create Auction';
+        document.title = 'Створити аукціон';
         axios.get(`${SERVER_URL}/auction/create_statuses`, getAuthConfig())
             .then(response => {
                 const data = response.data.statuses;
@@ -112,7 +112,7 @@ export default function AuctionForm() {
                 isLoading={isLoading}
                 submitBtnTxt="Створити">
                 <Input
-                    label="Ім'я"
+                    label="Назва аукціону"
                     isRequired
                     required
                     minLength={1}
