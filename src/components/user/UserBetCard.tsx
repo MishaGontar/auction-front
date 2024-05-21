@@ -24,24 +24,25 @@ export default function UserBetCard({bet}: UserBetCardProps) {
         <div onClick={handleClickCard} className={MAIN_BOX_CSS}>
             <div className="lg:basis-1/4 flex flex-col justify-center items-center mx-3.5">
                 <Image
+                    loading="lazy"
                     className={IMAGE_SIZE_STYLE}
-                    alt={"Lot photo"}
+                    alt="Лот фото"
                     src={getImagePath(bet.images[0].image_url)}
                 />
                 <div className="text-sm">
-                    Seller: {bet.seller_name}
+                    Продавець: {bet.seller_name}
                 </div>
             </div>
             <div className="lg:basis-2/4 flex flex-col">
                 <div className="my-1.5 text-xl">
-                    {bet.is_winner && <strong className="text-green-500 font-black">You win : </strong>}
+                    {bet.is_winner && <strong className="text-green-500 font-black">Ти виграв : </strong>}
                     {bet.lot_name}
                 </div>
                 <div className="my-1.5">
-                    <strong>Your bet is : </strong> {formatNumberWithSpaces(bet.amount.toString())} UAH
+                    <strong>Твоя ставка : </strong> {formatNumberWithSpaces(bet.amount.toString())} грн
                 </div>
                 <div className={`${TEXT_STYLE} my-1.5`}>
-                    Date: {convertToKyivTime(bet.date_created)}
+                    Дата: {convertToKyivTime(bet.date_created)}
                 </div>
             </div>
         </div>

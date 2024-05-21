@@ -24,6 +24,7 @@ import {IStatus} from "../../utils/IStatus.ts";
 import {getAuthConfig, getAuthFormDataConfig} from "../../utils/TokenUtils.ts";
 import {getErrorMessage} from "../../utils/ErrorUtils.ts";
 import {sendErrorNotify} from "../../utils/NotifyUtils.ts";
+import {validateCardNumber} from "../../utils/CardValidation.ts";
 
 interface IModalLotProps {
     isOpen: boolean,
@@ -119,33 +120,35 @@ export default function ModalLotForm({isOpen, auction, onSubmit, closeModal, lot
 
     function isIncorrectData(): boolean {
         const {bank_card_number, monobank_link} = lotForm;
-        if (monobank_link && !monobank_link.startsWith(monobank_start)) {
-            sendErrorNotify("Incorrect monobank link!")
-            setErrorInputCard((prev) => ({
-                ...prev,
-                ['monobank']: true,
-            }));
-            return true;
-        }
-        if (bank_card_number && bank_card_number.length !== 19) {
-            setErrorInputCard((prev) => ({
-                ...prev,
-                ['bank_card']: true,
-            }));
-            sendErrorNotify("Incorrect bank card number!")
-            return true;
-        }
 
         if (!monobank_link && !bank_card_number) {
             setErrorInputCard({
                 bank_card: true,
                 monobank: true,
             })
-            sendErrorNotify("Enter bank card number or monobank link")
+            sendErrorNotify("Введіть номер банківської карти або посилання на monobank")
             return true;
         }
+
+        if (monobank_link && !monobank_link.startsWith(monobank_start)) {
+            sendErrorNotify("Невірне посилання monobank!")
+            setErrorInputCard((prev) => ({
+                ...prev,
+                ['monobank']: true,
+            }));
+            return true;
+        }
+        if (bank_card_number && !validateCardNumber(bank_card_number)) {
+            setErrorInputCard((prev) => ({
+                ...prev,
+                ['bank_card']: true,
+            }));
+            sendErrorNotify("Невірний номер банківської картки!")
+            return true;
+        }
+
         if (!lot && (!files || files.length === 0)) {
-            sendErrorNotify("You need upload minimum 1 photo")
+            sendErrorNotify("Потрібно завантажити мінімум 1 фото")
             return true;
         }
         return false
@@ -206,13 +209,13 @@ export default function ModalLotForm({isOpen, auction, onSubmit, closeModal, lot
                 {!isLoading &&
                     <form onSubmit={handleSubmit}>
                         <ModalHeader className="flex flex-col gap-1">
-                            {lot ? "Edit lot" : "Create Lot"}
+                            {lot ? "Редагувати" : "Створити"} лот
                         </ModalHeader>
                         {error && <p className="text-xl text-red-500 mb-5 ml-1 ">{error}</p>}
                         <ModalBody>
 
                             <Input
-                                label="Name"
+                                label="Назва"
                                 required
                                 isRequired
                                 minLength={5}
@@ -222,14 +225,14 @@ export default function ModalLotForm({isOpen, auction, onSubmit, closeModal, lot
                             />
                             <Textarea
                                 isRequired
-                                label="About a lot"
+                                label="Опис"
                                 minLength={10}
                                 value={lotForm.description}
                                 className="m-1.5"
                                 onChange={(e) => handleInputChange('description', e)}
                             />
                             {!lot && <Input
-                                label="Start amount"
+                                label="Стартова ціна"
                                 required
                                 type="number"
                                 placeholder="0.00"
@@ -239,7 +242,7 @@ export default function ModalLotForm({isOpen, auction, onSubmit, closeModal, lot
                                 onChange={(e) => handleInputChange('amount', e)}
                             />}
                             <Input
-                                label="Link to monobank"
+                                label="Посилання на monobank банку"
                                 placeholder={`${monobank_start}...`}
                                 value={lotForm.monobank_link}
                                 isInvalid={errorInputCard.monobank}
@@ -247,7 +250,7 @@ export default function ModalLotForm({isOpen, auction, onSubmit, closeModal, lot
                                 onChange={(e) => handleInputChange('monobank_link', e)}
                             />
                             <Input
-                                label="Bank card number"
+                                label="Банківська картка"
                                 minLength={19}
                                 maxLength={19}
                                 isInvalid={errorInputCard.bank_card}
@@ -260,8 +263,8 @@ export default function ModalLotForm({isOpen, auction, onSubmit, closeModal, lot
                                 isRequired
                                 required
                                 defaultSelectedKeys={String(lotForm.status_id)}
-                                label="Status of auction"
-                                placeholder="Select a status"
+                                label="Статус"
+                                placeholder="Виберіть статус"
                                 className="my-1.5"
                                 onChange={(e) => handleInputChange('status_id', e)}
                             >
@@ -311,7 +314,7 @@ export default function ModalLotForm({isOpen, auction, onSubmit, closeModal, lot
                                     >
                                         <PlusLogo/>
                                         <span className="text-gray-400">
-                                            {lot ? "Replace with pictures" : "Click to add a picture"}
+                                            {lot ? "Замінити фото" : "Клікнути щоб додати фото"}
                                         </span>
                                         <input
                                             type="file"
@@ -326,13 +329,13 @@ export default function ModalLotForm({isOpen, auction, onSubmit, closeModal, lot
                         </ModalBody>
                         <ModalFooter className="my-1.5">
                             <Button variant="light" color="danger" onClick={closeModal}>
-                                Close
+                                Закрити
                             </Button>
                             <Button isLoading={isLoading}
                                     type="submit"
                                     color="success"
                             >
-                                {lot ? "Update a lot" : "Create a new lot"}
+                                {lot ? "Оновити" : "Створити новий"} лот
                             </Button>
                         </ModalFooter>
                     </form>

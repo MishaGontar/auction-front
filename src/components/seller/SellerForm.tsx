@@ -35,7 +35,7 @@ export default function SellerForm() {
     const [isSuccessful, setIsSuccessful] = useState(false);
 
     useEffect(() => {
-            document.title = "Become a seller"
+            document.title = "Стати продавцем"
             setIsLoading(true)
 
             axios.get(`${SERVER_URL}/seller`, getAuthConfig())
@@ -69,7 +69,7 @@ export default function SellerForm() {
             .then(response => {
                 const {new_token} = response.data;
                 if (!new_token) {
-                    setError("Something went wrong , try again.")
+                    setError("Щось пішло не так , повторіть будь ласка пізніше.")
                     return
                 }
                 saveAuthToken(new_token)
@@ -85,10 +85,10 @@ export default function SellerForm() {
 
     if (isAlreadySend) {
         return (<AuthPage>
-            <div className="flex justify-center text-3xl text-orange-500">
-                <div>
-                    <h3> You have already send message to become a seller. </h3>
-                    <h3>Please wait or contact us</h3>
+            <div className="flex justify-center items-center mt-10">
+                <div className="p-6 bg-white rounded-lg shadow-lg text-3xl text-orange-500 border-1.5 border-green-500">
+                    <h3 className="mb-4">Ви вже надіслали заяву, щоб стати продавцем.</h3>
+                    <h3>Будь ласка, зачекайте або зв'яжіться з нами.</h3>
                 </div>
             </div>
         </AuthPage>)
@@ -103,14 +103,14 @@ export default function SellerForm() {
     return (<AuthPage>
         {isSuccessful && <SellerSendModal isOpen={isSuccessful} username_or_email={user?.email || ''}/>}
         <FormTemplate
-            title="Become a seller"
+            title="Стати продавцем"
             onSubmit={handleSubmit}
             error={error}
             isLoading={isLoading}
-            submitBtnTxt="Submit an application"
+            submitBtnTxt="Надіслати заяву"
         >
             <Input
-                label="Full name"
+                label="Ім'я продавця або компанії"
                 required
                 isRequired
                 minLength={5}
@@ -119,24 +119,24 @@ export default function SellerForm() {
                 onChange={(e) => handleInputChange('full_name', e)}
             />
             <Input
-                label="Social media"
+                label="Соціальна мережа"
                 required
                 isRequired
                 minLength={5}
-                placeholder="instagram: @some_inst_teg or else"
+                placeholder="instagram: @some_inst_teg чи щось інше"
                 value={formSeller.social_media}
                 className="m-1.5"
                 onChange={(e) => handleInputChange('social_media', e)}
             />
             <Input
-                label="Adress"
+                label="Адреса"
                 minLength={5}
                 value={formSeller.address}
                 className="m-1.5"
                 onChange={(e) => handleInputChange('address', e)}
             />
             <Input
-                label="Phone number"
+                label="Телефон"
                 minLength={12}
                 value={formSeller.phone_number}
                 className="m-1.5"
@@ -144,8 +144,7 @@ export default function SellerForm() {
             />
             <Textarea
                 isRequired
-                label="About you"
-                placeholder="It will be in your profile"
+                label="Опис продавця або компанії"
                 minLength={10}
                 value={formSeller.description}
                 className="m-1.5"

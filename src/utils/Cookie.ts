@@ -9,7 +9,9 @@ class Cookie {
 
     public saveCookie(name: string, value: unknown, path: string = "/"): boolean {
         try {
-            this.cookie.set(name, value, {path: path});
+            const date = new Date();
+            date.setTime(date.getTime() + (3 * 24 * 60 * 60 * 1000));
+            this.cookie.set(name, value, {path: path, expires: date,});
             return true;
         } catch (e) {
             return false;

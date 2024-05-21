@@ -44,22 +44,22 @@ export default function ModalAdminEnterCode({isOpen, username_or_email}: IModalP
             placement="top-center"
         >
             <ModalContent>
-                <ModalHeader className="flex flex-col gap-1">Confirm your identity</ModalHeader>
+                <ModalHeader className="flex flex-col gap-1">Підтвердьте свою особу</ModalHeader>
                 <ModalBody>
-                    <div>We send a code to your email to confirm that's you</div>
+                    <div>Ми надіслали код на вашу електронну адресу, щоб підтвердити, що це ви</div>
                     {error && <div className="text-red-500">{error}</div>}
                     <Input
                         readOnly={isLoading}
                         autoFocus
                         isInvalid={error !== ''}
                         onChange={(e) => setCode(e.target.value)}
-                        label="Enter your code"
+                        label="Введіть ваш код"
                         variant="bordered"
                     />
                 </ModalBody>
                 <ModalFooter>
                     <Button isLoading={isLoading} color="primary" onClick={confirmCode}>
-                        Send code
+                        Надіслати код
                     </Button>
                 </ModalFooter>
             </ModalContent>

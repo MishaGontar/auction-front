@@ -11,7 +11,7 @@ export default function SellerPage({children}: { children: ReactNode }) {
 
     useEffect(() => {
         setIsLoading(true)
-        setIsSeller(user?.status_name === "accepted")
+        setIsSeller(user?.status_id === 2)
         setIsLoading(false)
     }, [user]);
 

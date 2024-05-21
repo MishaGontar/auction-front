@@ -80,7 +80,7 @@ export default function AuctionForm() {
 
     function handleSubmit() {
         if (!selectedImage) {
-            sendErrorNotify("Need select Image")
+            sendErrorNotify("Потрібно вибрати фото");
             return;
         }
 
@@ -107,12 +107,12 @@ export default function AuctionForm() {
     return (<SellerPage>
             <FormTemplate
                 error={error}
-                title="Create a Auction"
+                title="Створити аукціон"
                 onSubmit={handleSubmit}
                 isLoading={isLoading}
-                submitBtnTxt="Create">
+                submitBtnTxt="Створити">
                 <Input
-                    label="Name"
+                    label="Ім'я"
                     isRequired
                     required
                     minLength={1}
@@ -123,7 +123,7 @@ export default function AuctionForm() {
                 <Textarea
                     isRequired
                     required
-                    label="About an auction"
+                    label="Опис аукціону"
                     minLength={10}
                     value={formData.description}
                     className="my-1.5"
@@ -133,8 +133,8 @@ export default function AuctionForm() {
                 <Select
                     isRequired
                     required
-                    label="Status of auction"
-                    placeholder="Select a status"
+                    label="Статус"
+                    placeholder="Виберіть статус"
                     className="my-1.5"
                     onChange={(e) => handleInputChange('status', e)}
                 >
@@ -148,7 +148,7 @@ export default function AuctionForm() {
                     <div className="flex sm:flex-row flex-col items-center gap-4 my-5">
                         <div className="sm:w-1/2">
                             <div className="relative">
-                                <img src={URL.createObjectURL(selectedImage)} alt="Selected"
+                                <img src={URL.createObjectURL(selectedImage)} alt="Вибраний"
                                      className="max-w-full sm:h-auto h-64 rounded-lg"/>
                                 <button
                                     type="button"
@@ -167,7 +167,7 @@ export default function AuctionForm() {
                         className="cursor-pointer block border-dashed border-2 border-gray-300 p-4 text-center rounded-lg my-3"
                     >
                         <PlusLogo/>
-                        <span className="text-gray-400">Click to add a photo</span>
+                        <span className="text-gray-400">Натисніть , щоб додати фото</span>
                         <input
                             type="file"
                             accept="image/jpeg, image/png"

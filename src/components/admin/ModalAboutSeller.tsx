@@ -15,14 +15,15 @@ interface SellerModalProps {
 
 export default function ModalAboutSeller({seller, onClose, onChange}: SellerModalProps) {
     const [isLoading, setIsLoading] = useState(false);
-    const sellerStatus = seller.seller_status;
-    const buttonsVisible = sellerStatus === "rejected" || sellerStatus === "pending"
-    const colorStatus = sellerStatus === "rejected" ? "text-red-600" : ""
+    const sellerStatus = seller.seller_status_id;
+    const buttonsVisible = sellerStatus === 1 || sellerStatus === 3
+    const colorStatus = sellerStatus === 3 ? "text-red-600" : ""
 
-    function changeSellerStatus(action: string) {
+    function changeSellerStatus(action_id: number) {
         setIsLoading(true)
-        axios.post(`${SERVER_URL}/seller/${action}`, seller, getAdminAuthConfig())
-            .then(() => sendInfoNotify(`We successful ${action} seller ${seller.full_name} `))
+        const action = action_id === 2 ? 'підтвердили' : 'відхилили';
+        axios.post(`${SERVER_URL}/seller/${action_id}`, seller, getAdminAuthConfig())
+            .then(() => sendInfoNotify(`Ми успішно ${action} продавця ${seller.full_name}`))
             .catch(error => sendErrorNotify(error.message))
             .finally(() => {
                 setIsLoading(false)
@@ -32,15 +33,16 @@ export default function ModalAboutSeller({seller, onClose, onChange}: SellerModa
     }
 
     function rejectSeller() {
-        changeSellerStatus("reject")
+        changeSellerStatus(3)
     }
 
     function acceptSeller() {
-        changeSellerStatus("accept")
+        changeSellerStatus(2)
     }
 
     return (<>
         <Modal placement="top-center"
+               size="lg"
                backdrop="opaque"
                isOpen={seller.seller_id !== null || seller.seller_id}
                onClose={onClose}
@@ -49,10 +51,10 @@ export default function ModalAboutSeller({seller, onClose, onChange}: SellerModa
                 {isLoading && <SpinnerView/>}
                 {!isLoading && <>
                     <ModalHeader className="flex justify-center gap-1">
-                        Seller {seller.full_name}
+                        Продавець {seller.full_name}
                     </ModalHeader>
                     <ModalBody className="sm:mx-10">
-                        <div className="bg-white shadow-md rounded-lg p-6 w-80 ">
+                        <div className="bg-white shadow-md rounded-lg p-6 ">
                             <img src={`${SERVER_URL}${seller.image_url}`}
                                  alt={seller.full_name}
                                  className="rounded-full w-20 h-20 mx-auto mb-4"/>
@@ -67,32 +69,32 @@ export default function ModalAboutSeller({seller, onClose, onChange}: SellerModa
 
                             <ul className="divide-y divide-gray-200">
                                 <li className="py-1">
-                                    <span className="font-semibold mx-0.5">Email:</span>
+                                    <span className="font-semibold mx-0.5">Електрона адреса:</span>
                                     {seller.email}
                                 </li>
 
                                 {seller.phone_number && (
                                     <li className="py-1">
-                                        <span className="font-semibold mx-0.5">Phone:</span>
+                                        <span className="font-semibold mx-0.5">Телефон:</span>
                                         {seller.phone_number}
                                     </li>
                                 )}
 
                                 {seller.address && (
                                     <li className="py-1">
-                                        <span className="font-semibold mx-0.5">Address:</span>
+                                        <span className="font-semibold mx-0.5">Адреса:</span>
                                         {seller.address}
                                     </li>
                                 )}
 
                                 <li className="py-1">
-                                    <span className="font-semibold mx-0.5">Social Media:</span>
+                                    <span className="font-semibold mx-0.5">Соціальні мережі:</span>
                                     {seller.social_media}
                                 </li>
 
                                 <li className={`py-1 ${colorStatus}`}>
                                 <span className="font-semibold mx-0.5">
-                                    Status:
+                                    Статус:
                                 </span>
                                     {seller.seller_status}
                                 </li>
@@ -101,15 +103,15 @@ export default function ModalAboutSeller({seller, onClose, onChange}: SellerModa
                     </ModalBody>
                     <ModalFooter className="flex flex-col-reverse">
                         {buttonsVisible && (<>
-                            {seller.seller_status === "pending" &&
+                            {sellerStatus === 1 &&
                                 <Button color="danger"
                                         onPress={rejectSeller}>
-                                    Reject seller
+                                    Відмовитися від продавця
                                 </Button>
                             }
                             <Button color="success"
                                     onPress={acceptSeller}>
-                                Accept seller
+                                Підтвердити продавця
                             </Button>
                         </>)}
                     </ModalFooter>

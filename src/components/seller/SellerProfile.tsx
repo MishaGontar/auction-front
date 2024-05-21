@@ -22,30 +22,30 @@ export default function SellerProfile() {
     const navigator = useNavigate()
 
     useEffect(() => {
-        const is_owner = user?.seller_id === seller?.seller_id
-        setIsOwner(is_owner)
-        if (!is_owner && auctions) {
-            setAuctions(auctions.filter(a => a.auction_status_id === 1))
-        }
-    }, [auctions, seller, user?.seller_id]);
-
-
-    useEffect(() => {
-        setIsLoading(true)
+        setIsLoading(true);
         axios.get(`${SERVER_URL}/seller/info/${id}`)
             .then(res => {
-                setAuctions(res.data.auctions)
-                setSeller(res.data.seller)
+                const sellerData = res.data.seller;
+                const auctionsData = res.data.auctions;
 
+                setSeller(sellerData);
+                setIsOwner(user?.seller_id === sellerData.seller_id);
+
+                if (user?.seller_id === sellerData.seller_id) {
+                    setAuctions(auctionsData);
+                } else {
+                    setAuctions(auctionsData.filter(a => a.auction_status_id === 1));
+                }
             })
             .catch(error => {
-                sendErrorNotify(getErrorMessage(error))
-                if (error.response.status === 404) {
-                    navigator('/auctions')
+                sendErrorNotify(getErrorMessage(error));
+                if (error.response && error.response.status === 404) {
+                    navigator('/auctions');
                 }
             })
             .finally(() => setIsLoading(false));
-    }, [id, user]);
+    }, [id, user, navigator]);
+
 
     if (isLoading) {
         return <SpinnerView/>
@@ -54,7 +54,7 @@ export default function SellerProfile() {
         <div className={MAIN_BOX_CONTAINER}>
             <Card className={`${LARGE_BOX_CARD}`}>
                 <CardHeader className="pb-0 pt-2 px-4 flex justify-center py-5">
-                    <p className="text-3xl font-bold">All auctions</p>
+                    <p className="text-3xl font-bold">Всі аукціони</p>
                 </CardHeader>
                 <CardBody>
                     {auctions && auctions.length > 0 &&
@@ -66,15 +66,13 @@ export default function SellerProfile() {
                     <CardHeader className="flex flex-col items-center">
                         <img src={getImagePath(seller?.image_url)} alt={"Avatar"}
                              className="w-[150px] h-auto"/>
-                        {isOwner && <h1 className="text-blue-500 hover:cursor-pointer"
-                                        onClick={() => console.log("Change photo")}>Change photo</h1>}
                     </CardHeader>
                     <div className="mx-1.5">
-                        <h1 className={TEXT_STYLE}><strong>Seller name : </strong> {seller?.full_name}</h1>
-                        <p className={TEXT_STYLE}><strong>Description: </strong> {seller?.description}</p>
-                        <p className={TEXT_STYLE}><strong>Social media: </strong> {seller?.social_media}</p>
+                        <h1 className={TEXT_STYLE}><strong>Продавець : </strong> {seller?.full_name}</h1>
+                        <p className={TEXT_STYLE}><strong>Опис: </strong> {seller?.description}</p>
+                        <p className={TEXT_STYLE}><strong>Соціальні мережі: </strong> {seller?.social_media}</p>
                         {seller?.address &&
-                            <p className={TEXT_STYLE}><strong>Address: </strong> {seller.address}</p>}
+                            <p className={TEXT_STYLE}><strong>Адреса: </strong> {seller.address}</p>}
                     </div>
                 </div>
             </Card>

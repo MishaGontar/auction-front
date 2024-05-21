@@ -1,7 +1,7 @@
 import {ReactNode, useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
-import {Spinner} from "@nextui-org/react";
 import {getAuthToken} from "../../utils/TokenUtils.ts";
+import SpinnerView from "../template/Spinner.tsx";
 
 export default function AuthPage({children}: { children: ReactNode }) {
     const [isLoading, setIsLoading] = useState(true);
@@ -12,7 +12,8 @@ export default function AuthPage({children}: { children: ReactNode }) {
         setIsLoading(false)
     }, []);
 
+
     return isLoading
-        ? <Spinner label="Loading..." size="lg" color="warning" className="flex justify-center h-screen"/>
+        ? <SpinnerView/>
         : <>{children} </>;
 }

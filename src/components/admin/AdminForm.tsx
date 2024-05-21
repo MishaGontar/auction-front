@@ -25,7 +25,7 @@ export default function AdminLoginForm() {
     const [showModal, setShowModal] = useState(false);
 
     useEffect(() => {
-        document.title = 'AdminLogin';
+        document.title = 'Адмін логін';
     }, []);
 
     const handleInputChange = (field: keyof AdminFormData, e: ChangeEvent<HTMLInputElement>) => {
@@ -57,14 +57,14 @@ export default function AdminLoginForm() {
         <>
             {showModal && <ModalAdminEnterCode username_or_email={formData.login} isOpen={showModal}/>}
             <FormTemplate
-                title="Admin login"
-                submitBtnTxt="Login"
+                title="Вхід адміністратора"
+                submitBtnTxt="Вхід"
                 onSubmit={handleLogin}
                 error={error}
                 isLoading={isLoading}
             >
                 <Input
-                    label="Login"
+                    label="Логін"
                     required
                     minLength={4}
                     value={formData.login}
@@ -75,7 +75,7 @@ export default function AdminLoginForm() {
                     onChange={(e) => handleInputChange('password', e)}
                 />
                 <PasswordInput
-                    label="Secure code"
+                    label="Код безпеки"
                     value={formData.secure_code}
                     onChange={(e) => handleInputChange('secure_code', e)}
                 />

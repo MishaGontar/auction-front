@@ -11,17 +11,17 @@ export default function SellerSendModal({isOpen, username_or_email}: IModalProps
             placement="top-center"
         >
             <ModalContent>
-                <ModalHeader className="flex flex-col gap-1">Information</ModalHeader>
+                <ModalHeader className="flex flex-col gap-1">Інформація</ModalHeader>
                 <ModalBody>
-                    <div>We have sent a letter to the administration to confirm your application to become an auction
-                        seller. We will send you a letter to your mail <strong>{username_or_email}</strong>
+                    <div>Ми надіслали листа адміністрації для підтвердження вашої заявки щоб стати продавцем.
+                        Ми надішлемо вам листа на пошту <strong>{username_or_email} </strong> .
                     </div>
-                    <div className="italic text-orange-500">
-                        If you want to get a faster answer, please contact us
+                    <div className="italic text-orange-600">
+                        Якщо ви хочете швидше отримати відповідь, зв'яжіться з нами
                     </div>
                 </ModalBody>
                 <ModalFooter>
-                    <Button color="primary" onClick={() => navigation('/auctions')}> Okay </Button>
+                    <Button color="primary" onClick={() => navigation('/auctions')}> Добре </Button>
                 </ModalFooter>
             </ModalContent>
         </Modal>

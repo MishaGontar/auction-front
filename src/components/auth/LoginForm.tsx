@@ -23,7 +23,7 @@ export default function LoginForm() {
     const [showModal, setShowModal] = useState(false);
 
     useEffect(() => {
-        document.title = 'Login';
+        document.title = 'Вхід';
     }, []);
 
     const handleInputChange = (field: keyof FormData, e: ChangeEvent<HTMLInputElement>) => {
@@ -55,16 +55,16 @@ export default function LoginForm() {
         <>
             {showModal && <ModalEnterCode username_or_email={formData.login} isOpen={showModal}/>}
             <FormTemplate
-                title="Login"
-                submitBtnTxt="Login"
+                title="Вхід в систему"
+                submitBtnTxt="Вхід"
                 onSubmit={handleLogin}
                 error={error}
                 isLoading={isLoading}
                 link="/registration"
-                linkText="Create new account"
+                linkText="Створити новий акаунт"
             >
                 <Input
-                    label="Username or email"
+                    label="Ім'я користувача або електрона пошта"
                     required
                     minLength={4}
                     value={formData.login}

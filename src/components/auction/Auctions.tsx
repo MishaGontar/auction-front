@@ -19,7 +19,7 @@ export default function Auctions() {
     const {user} = useAuth();
 
     useEffect(() => {
-        document.title = 'Auctions'
+        document.title = 'Аукціони'
         setIsLoading(true)
         if (user) {
             axios.get(`${SERVER_URL}/auctions/all_auth`, getAuthConfig())
@@ -41,7 +41,9 @@ export default function Auctions() {
     return (
         <div className="flex justify-center">
             <div className="m-7 gap-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-                {auctions?.length === 0 && <h1 className="flex justify-center">No available auctions found</h1>}
+                {auctions?.length === 0 &&
+                    <h1 className="flex justify-center">Немає доступних аукціонів</h1>
+                }
                 {auctions?.map((auction, index) => (
                     <Card shadow="sm"
                           className={"h-full"}

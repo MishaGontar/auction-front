@@ -9,22 +9,18 @@ const options = {
     pauseOnHover: true,
     draggable: true,
     progress: undefined,
-    theme: "light",
+    theme: "dark",
     transition: Bounce,
 }
 
+export function sendSuccessfulNotify(msg: string) {
+    // @ts-ignore
+    toast.success(msg, options)
+}
+
 export function sendInfoNotify(msg: string) {
-    toast.info(msg, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Bounce,
-    })
+    // @ts-ignore
+    toast.info(msg, options)
 }
 
 export function sendErrorNotify(msg: string) {

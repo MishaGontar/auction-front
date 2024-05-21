@@ -48,7 +48,7 @@ const RegistrationForm = () => {
                 saveMfaToken(response.data.token);
                 setShowModal(true);
             })
-            .catch((error) => setError(error.response?.data?.message || 'An error occurred'))
+            .catch((error) => setError(error.response?.data?.message || 'Сталося помилка'))
             .finally(() => setIsLoading(false));
     };
 
@@ -56,18 +56,18 @@ const RegistrationForm = () => {
         <>
             {showModal && <ModalEnterCode username_or_email={formData.email} isOpen={showModal}/>}
             <FormTemplate
-                title="Registration"
-                submitBtnTxt="Registration"
+                title="Реєстрація"
+                submitBtnTxt="Зареєструватись"
                 onSubmit={handleRegistration}
                 error={error}
                 isLoading={isLoading}
                 link="/login"
-                linkText="Already have an account?"
+                linkText="Вже є аккаунт? Тиць"
             >
                 <Input
                     required
                     minLength={4}
-                    label="Username"
+                    label="Ім'я користувача"
                     value={formData.username}
                     onChange={(e) => handleInputChange('username', e)}
                 />
@@ -75,23 +75,23 @@ const RegistrationForm = () => {
                     required
                     type="email"
                     minLength={10}
-                    label="Email"
+                    label="Електрона адреса"
                     value={formData.email}
                     onChange={(e) => handleInputChange('email', e)}
                     className={"mt-2"}
                 />
                 <PasswordInput
-                    label="Password"
+                    label="Пароль"
                     value={formData.password}
                     onChange={(e) => handleInputChange('password', e)}
                     isInvalid={isNotEqualsPassword}
                 />
                 <PasswordInput
-                    label="Confirm Password"
+                    label="Повторіть пароль"
                     value={formData.confirmPassword}
                     onChange={(e) => handleInputChange('confirmPassword', e)}
                     isInvalid={isNotEqualsPassword}
-                    errorMessage="Passwords do not match"
+                    errorMessage="Паролі не співпадають"
                 />
             </FormTemplate>
         </>

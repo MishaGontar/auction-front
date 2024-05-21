@@ -6,13 +6,13 @@ export interface IImage {
     image_url: string
 }
 
-// max 2mb
+// max 5mb
 export function checkImageFile(file: File): string | null {
 
     if (!isJpegOrPngFile(file)) {
         return "File need to be .jpeg or .png format"
     }
-    const maxFileSize = 2;
+    const maxFileSize = 5;
     if (isLargeFile(file, maxFileSize)) {
         return `File size max ${maxFileSize}mb`
     }

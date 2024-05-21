@@ -24,8 +24,9 @@ export default function AuctionCard({auction}: AuctionCardProps) {
         <div onClick={handleClickCard} className={MAIN_BOX_CSS}>
             <div className="lg:basis-1/4 flex flex-col justify-center items-center mx-3.5">
                 <Image
+                    loading="lazy"
                     className={IMAGE_SIZE_STYLE}
-                    alt={"Lot photo"}
+                    alt="Фото аукціону"
                     src={getImagePath(auction.auction_img_path)}
                 />
             </div>
@@ -40,7 +41,7 @@ export default function AuctionCard({auction}: AuctionCardProps) {
                     </Chip>
                 </div>
                 <div className={`${TEXT_STYLE} my-1.5`}>
-                    Date: {convertToOnlyData(auction.date_created)}
+                    Дата: {convertToOnlyData(auction.date_created)}
                 </div>
             </div>
         </div>

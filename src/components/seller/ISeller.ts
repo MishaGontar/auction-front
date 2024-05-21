@@ -5,6 +5,7 @@ export interface ISeller {
     full_name: string;
     social_media: string;
     seller_status: string;
+    seller_status_id: number,
     description: string;
     email: string;
     image_url: string;

@@ -19,14 +19,7 @@ import {useEffect, useState} from "react";
 import axios from "axios";
 import {SERVER_URL} from "../constans.ts";
 import {useAuth} from "../provider/AuthProvider.tsx";
-import {
-    getAdminToken,
-    getAuthConfig,
-    getAuthToken,
-    removeAdminToken,
-    removeAuthToken,
-    removeMfaToken
-} from "../utils/TokenUtils.ts";
+import {getAdminToken, getAuthConfig, getAuthToken} from "../utils/TokenUtils.ts";
 
 interface IMenuItem {
     color: ColorTypeSecond,
@@ -38,18 +31,18 @@ interface IMenuItem {
 const adminMenuItem: IMenuItem = {
     color: 'foreground',
     href: '/admin/dashboard',
-    name: 'Admin dashboard'
+    name: 'Адмін панель'
 }
 
 const sellerMenuItem: IMenuItem = {
     color: 'foreground',
     href: '/create/auction',
-    name: 'Create auction'
+    name: 'Створити аукціон'
 }
 const initMenu: IMenuItem = {
     color: 'foreground',
     href: '/auctions',
-    name: 'Auctions'
+    name: 'Аукціони'
 }
 export default function Header() {
     const navigator = useNavigate()
@@ -57,7 +50,7 @@ export default function Header() {
 
     const isLogin = getAuthToken()
     const isAdmin = getAdminToken()
-    const isSeller = isLogin && (user?.status_name === "accepted")
+    const isSeller = isLogin && (user?.status_id === 2)
 
 
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -89,31 +82,29 @@ export default function Header() {
     }, [isLogin, login, user])
 
     function ifNotExistPush(url: string, menuItem: IMenuItem) {
-        setMenuItems(prevState => {
-            if (menuItems.find(m => m.href.includes(url))) {
-                return prevState
+        setMenuItems(prevItems => {
+            if (prevItems.some((item) => item.href.includes(url))) {
+                return prevItems;
             }
-            return [...prevState, menuItem]
+            return [...prevItems, menuItem];
         })
     }
 
     function logOut() {
-        removeAuthToken()
-        removeMfaToken()
-        removeAdminToken()
         setMenuItems([initMenu])
         logout()
         navigator('/auctions')
     }
 
-    return (<Navbar isBordered onMenuOpenChange={setIsMenuOpen}>
+    return (
+        <Navbar isBordered onMenuOpenChange={setIsMenuOpen}>
             <NavbarContent>
                 <NavbarMenuToggle
                     aria-label={isMenuOpen ? "Close menu" : "Open menu"}
                     className="sm:hidden"
                 />
                 <NavbarContent className="hidden sm:flex gap-4 my-1.5">
-                    {menuItems.map((item, key) => (<>
+                    {menuItems.map((item, key) => (
                         <NavbarItem key={key}>
                             <Link isDisabled={item.disabled}
                                   color={item.color}
@@ -122,65 +113,67 @@ export default function Header() {
                                 {item.name}
                             </Link>
                         </NavbarItem>
-                    </>))
-                    }
+                    ))}
                 </NavbarContent>
             </NavbarContent>
-            {!isLogin && <NavbarContent as="div" justify="end">
-                <Button color="primary"
-                        variant="bordered"
-                        as="div"
-                        onClick={() => navigator('/login')}>
-                    Login
-                </Button>
-            </NavbarContent>}
-            {isLogin && <NavbarContent as="div" justify="end">
-                <Dropdown placement="bottom-end">
-                    <DropdownTrigger>
-                        <Avatar
-                            isBordered
-                            as="button"
-                            className="transition-transform"
-                            size="sm"
-                            src={`${SERVER_URL}${user?.image_url}`}
-                        />
-                    </DropdownTrigger>
-                    <DropdownMenu aria-label="Profile Actions" variant="flat">
-                        <DropdownItem key="profile"
-                                      href="/profile"
-                                      className="h-10 gap-2">
-                            <p className="font-semibold"> Signed in as {user?.username} </p>
-                        </DropdownItem>
-                        <DropdownItem key="settings"
-                                      onClick={()=>navigator('/profile')}>
-                            My Profile
-                        </DropdownItem>
-                        <DropdownItem key="settings"
-                                      href={`/seller/${user?.seller_id}`}
-                                      className={isSeller ? '' : 'hidden'}
-                        >
-                            My Seller Profile
-                        </DropdownItem>
-                        <DropdownItem key="become_seller"
-                                      href="/become.seller"
-                                      color="secondary"
-                                      className={isSeller || user?.seller_id ? 'hidden' : ''}
-                        >
-                            Become a seller
-                        </DropdownItem>
-                        <DropdownItem key="logout"
-                                      color="danger"
-                                      onClick={logOut}>
-                            Log Out
-                        </DropdownItem>
-                    </DropdownMenu>
-                </Dropdown>
-            </NavbarContent>}
+            {!isLogin && (
+                <NavbarContent as="div" justify="end">
+                    <Button color="primary"
+                            variant="bordered"
+                            as="div"
+                            onClick={() => navigator('/login')}>
+                        Увійти
+                    </Button>
+                </NavbarContent>
+            )}
+            {isLogin && (
+                <NavbarContent as="div" justify="end">
+                    <Dropdown placement="bottom-end">
+                        <DropdownTrigger>
+                            <Avatar
+                                isBordered
+                                as="button"
+                                className="transition-transform"
+                                size="sm"
+                                src={`${SERVER_URL}${user?.image_url}`}
+                            />
+                        </DropdownTrigger>
+                        <DropdownMenu aria-label="Profile Actions" variant="flat">
+                            <DropdownItem key="profile"
+                                          href="/profile"
+                                          className="h-10 gap-2">
+                                <p className="font-semibold"> Увійшли як {user?.username} </p>
+                            </DropdownItem>
+                            <DropdownItem key="settings"
+                                          onClick={() => navigator('/profile')}>
+                                Мій особистий профіль
+                            </DropdownItem>
+                            <DropdownItem key="seller_profile"
+                                          href={`/seller/${user?.seller_id}`}
+                                          className={isSeller ? '' : 'hidden'}
+                            >
+                                Профіль продавця
+                            </DropdownItem>
+                            <DropdownItem key="become_seller"
+                                          href="/become.seller"
+                                          color="secondary"
+                                          className={isSeller || user?.seller_id ? 'hidden' : ''}
+                            >
+                                Стати продавцем
+                            </DropdownItem>
+                            <DropdownItem key="logout"
+                                          color="danger"
+                                          onClick={logOut}>
+                                Вийти з акаунта
+                            </DropdownItem>
+                        </DropdownMenu>
+                    </Dropdown>
+                </NavbarContent>
+            )}
             <NavbarMenu className="flex items-center">
                 {menuItems.map((menuItem, index) => (
-                    <NavbarMenuItem key={`${menuItem.name}-${index}`} className="my-1.5 "
-                                    isActive={window.location.href.includes(menuItem.href)}
-                    >
+                    <NavbarMenuItem key={index} className="my-1.5"
+                                    isActive={window.location.href.includes(menuItem.href)}>
                         <Link
                             color={menuItem.color}
                             className="w-full"

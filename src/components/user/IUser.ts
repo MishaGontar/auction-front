@@ -10,6 +10,7 @@ export interface IUser {
     full_name?: string,
     social_media?: string,
     status_name?: string,
+    status_id?: number,
     address?: number,
     phone_number?: number,
 }

@@ -19,7 +19,7 @@ export default function PasswordInput({value, onChange, label, isInvalid, errorM
         <Input
             required
             minLength={4}
-            label={label ? label : "Password"}
+            label={label ? label : "Пароль"}
             value={value}
             isInvalid={isInvalid}
             errorMessage={errorMessage}

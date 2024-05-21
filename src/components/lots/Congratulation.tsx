@@ -6,16 +6,18 @@ export default function Congratulation({lot}: { lot: ILotPageResponse }) {
 
     function handleCardCopy() {
         navigator.clipboard.writeText(lot.lot_bank_card_number)
-            .then(() => sendInfoNotify("Copied card number"))
+            .then(() => sendInfoNotify("Скопійовано картку"))
     }
 
     return (
         <div className="flex  flex-col justify-center items-center border-1 p-3 rounded-3xl">
-            Congratulation! You win the lot 🥳, send money to
+            Вітаю! Ви виграли лот 🥳, надішліть гроші на
             <div className="flex flex-col items-center">
                 {lot.lot_bank_card_number &&
-                    <div onClick={handleCardCopy}>
-                        <strong>Card number:</strong> {lot.lot_bank_card_number}
+                    <div className="flex flex-row" onClick={handleCardCopy}>
+                        <strong>Номер картки: </strong>
+                        <p className="text-blue-500 cursor-pointer mx-1.5"> {lot.lot_bank_card_number}</p>
+                        <small className="text-gray-500">(Клацніть щоб скопіювати)</small>
                     </div>
                 }
                 {lot.lot_monobank_link &&

@@ -40,6 +40,11 @@ export function removeAdminToken(): boolean {
     return Cookie.removeCookie(ADMIN_TOKEN)
 }
 
+export function removeAllTokens(): void {
+    removeAuthToken()
+    removeMfaToken()
+    removeAdminToken()
+}
 
 export function getAuthConfig() {
     return {

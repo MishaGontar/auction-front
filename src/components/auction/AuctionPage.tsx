@@ -6,7 +6,19 @@ import {IMAGE_SIZE_STYLE, MAIN_BOX_CONTAINER, SERVER_URL, SMALL_BOX_CARD} from "
 import {capitalizeFirstLetter, ColorType, getInfoStatusById,} from "../../utils/CustomUtils.ts";
 import SpinnerView from "../template/Spinner.tsx";
 import {IAuction} from "./IAuction.ts";
-import {Button, Card, CardBody, CardHeader, Chip, Image, Input, Select, SelectItem, Textarea} from "@nextui-org/react";
+import {
+    Button,
+    Card,
+    CardBody,
+    CardHeader,
+    Chip,
+    Image,
+    Input,
+    Link,
+    Select,
+    SelectItem,
+    Textarea
+} from "@nextui-org/react";
 import LotCardBody from "../lots/LotCardBody.tsx";
 import ModalLotForm from "../lots/ModalLotForm.tsx";
 import {ILot} from "../lots/LotInterfaces.ts";
@@ -15,7 +27,7 @@ import ButtonModalConfirmDelete from "../template/ButtonModalConfirmDelete.tsx";
 import {IStatus} from "../../utils/IStatus.ts";
 import {getAuthConfig, getAuthFormDataConfig} from "../../utils/TokenUtils.ts";
 import {getErrorMessage} from "../../utils/ErrorUtils.ts";
-import {sendErrorNotify, sendInfoNotify} from "../../utils/NotifyUtils.ts";
+import {sendErrorNotify, sendInfoNotify, sendSuccessfulNotify} from "../../utils/NotifyUtils.ts";
 import {checkImageFile, getImagePath} from "../../utils/ImageUtils.ts";
 
 export default function AuctionPage() {
@@ -34,7 +46,7 @@ export default function AuctionPage() {
     const [isEditMode, setIsEditMode] = useState(false)
 
     useEffect(() => {
-        document.title = 'Auction Info'
+        document.title = 'Інформація про аукціон'
         getInfoAuction()
     }, [user]);
 
@@ -100,7 +112,7 @@ export default function AuctionPage() {
     }
 
     function onCreated() {
-        sendInfoNotify("Lot created successful");
+        sendSuccessfulNotify("Лот створився успішно");
         onCloseModal();
         getAllLots();
     }
@@ -114,7 +126,7 @@ export default function AuctionPage() {
 
     function handleSaveAuction() {
         if (!newAuction || (auction === newAuction && !selectedNewImage)) {
-            sendInfoNotify("Nothing changes")
+            sendInfoNotify("Нічого не змінилось")
             handleCancelAuction()
             return;
         }
@@ -158,7 +170,7 @@ export default function AuctionPage() {
         setIsLoading(true)
         axios.delete(`${SERVER_URL}/delete/auction/${auction?.auction_id}`, getAuthConfig())
             .then(() => {
-                sendInfoNotify("Auction delete successful")
+                sendSuccessfulNotify("Аукціон видалився успішно")
                 navigate('/auctions')
             })
             .catch(error => sendErrorNotify(getErrorMessage(error)))
@@ -225,7 +237,7 @@ export default function AuctionPage() {
                             <div className="flex sm:flex-row flex-col items-center gap-4 my-5">
                                 <div className="sm:w-1/2">
                                     <div className="relative">
-                                        <img src={URL.createObjectURL(selectedNewImage)} alt="Selected"
+                                        <img src={URL.createObjectURL(selectedNewImage)} alt="Вибраний"
                                              className="max-w-full sm:h-auto h-64 rounded-lg"/>
                                         <button
                                             type="button"
@@ -245,7 +257,7 @@ export default function AuctionPage() {
                             >
                                 <PlusLogo/>
                                 <span
-                                    className="text-gray-400">Click to add a photo (will replace current img auction)</span>
+                                    className="text-gray-400">Натисніть щоб вибрати зображення , яке замінить теперішнє</span>
                                 <input
                                     type="file"
                                     accept="image/jpeg, image/png"
@@ -260,7 +272,7 @@ export default function AuctionPage() {
                 <CardBody className="overflow-visible py-2">
                     {isEditMode && <>
                         <Input
-                            label="Name"
+                            label="Назва аукціону"
                             isRequired
                             required
                             minLength={1}
@@ -271,7 +283,7 @@ export default function AuctionPage() {
                         <Textarea
                             isRequired
                             required
-                            label="About an auction"
+                            label="Про аукціон"
                             minLength={10}
                             value={newAuction?.auction_description}
                             className="my-1.5"
@@ -280,8 +292,8 @@ export default function AuctionPage() {
                         <Select
                             isRequired
                             required
-                            label="Status of auction"
-                            placeholder="Select a status"
+                            label="Статус аукціону"
+                            placeholder="Віберіть статус"
                             defaultSelectedKeys={[newAuction?.auction_status_id]}
                             className="my-1.5"
                             onChange={(e) => handleInputChange('auction_status_id', e)}
@@ -298,51 +310,55 @@ export default function AuctionPage() {
                         <p className="text-tiny font-sans my-2">{auction?.auction_description}</p>
                         <div className="flex justify-between my-2">
                             <Chip color={color} className="hover:cursor-default">{auction?.auction_status}</Chip>
-                            <small className="text-default-500 hover:cursor-pointer"
-                                   onClick={() => navigate(`/seller/${auction?.seller_id}`)}>
-                                {auction?.seller_name}
-                            </small>
+                            <div>
+                                <small className="text-default-500">Продавець: </small>
+                                <Link className="hover:cursor-pointer"
+                                      size="sm"
+                                      showAnchorIcon
+                                      onClick={() => navigate(`/seller/${auction?.seller_id}`)}>
+                                    {auction?.seller_name}
+                                </Link>
+                            </div>
                         </div>
                     </>}
 
                     {auction?.is_owner && <>
                         {isEditMode && <>
                             <Button color="warning" className="my-2" onClick={handleSaveAuction}>
-                                Save auction
+                                Зберегти зміни
                             </Button>
                             <Button color="default" className="my-2" onClick={handleCancelAuction}>
-                                Cancel
+                                Відхилити
                             </Button>
                         </>
                         }
                         {!isEditMode &&
-                            <Button color="success" onClick={handleEditAuction}>Edit auction</Button>
+                            <Button color="success" onClick={handleEditAuction}>Редагувати аукціон</Button>
                         }
-                        <ButtonModalConfirmDelete object={"Auction"} onAccept={handleDeleteAuction}/>
+                        <ButtonModalConfirmDelete object={"аукціон"} onAccept={handleDeleteAuction}/>
                     </>
                     }
                 </CardBody>
             </Card>
             <Card className="lg:basis-2/4 flex flex-col">
                 <CardHeader className="pb-0 pt-2 px-4 flex sm:justify-between sm:flex-row flex-col">
-                    <p className="text-2xl font-bold"> Lots of auction :</p>
+                    <p className="text-2xl font-bold"> Лоти аукціону :</p>
                     {auction?.is_owner &&
                         <Button onClick={() => setShowModal(true)}
                                 className=" sm:m-0 my-2"
                                 color="primary">
-                            Create new lot
+                            Створити лот
                         </Button>
                     }
                 </CardHeader>
                 <CardBody className="flex flex-col">
                     {lots?.length === 0 &&
-                        <h1 className="flex justify-center">No available lots found</h1>
+                        <h1 className="flex justify-center">Немає доступних лотів</h1>
                     }
                     {lots?.map(lot => (
                         <LotCardBody key={lot.id}
                                      is_owner={auction?.is_owner}
                                      lot={lot}
-                                     onClick={() => console.log("wefwef")}
                                      onDelete={handleDeleteLot}
                         />
                     ))}

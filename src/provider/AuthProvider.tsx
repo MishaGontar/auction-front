@@ -1,5 +1,6 @@
 import {createContext, ReactNode, useContext, useState} from 'react';
 import {IUser} from "../components/user/IUser.ts";
+import {removeAllTokens} from "../utils/TokenUtils.ts";
 
 interface AuthContextType {
     user: IUser | null;
@@ -17,6 +18,7 @@ export function AuthProvider({children}: { children: ReactNode }) {
     };
 
     const logout = () => {
+        removeAllTokens()
         setUser(null);
     };
 

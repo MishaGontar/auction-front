@@ -6,7 +6,6 @@ import axios from "axios";
 import {LARGE_BOX_CARD, MAIN_BOX_CONTAINER, SERVER_URL, SMALL_BOX_CARD} from "../../constans.ts";
 import {convertFormattedAmountToNumber, formatNumberWithSpaces, getInfoStatusById} from "../../utils/CustomUtils.ts";
 import SpinnerView from "../template/Spinner.tsx";
-
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
@@ -40,13 +39,19 @@ export default function LotPage() {
     const {user} = useAuth();
     const {id} = useParams();
     const navigate = useNavigate();
+
     useEffect(() => {
-        document.title = 'Lot Info';
+        document.title = 'Лот';
         getLot();
     }, [user]);
 
 
     useEffect(() => {
+        if(lot?.status.id === 3 && !lot.is_owner) {
+            sendErrorNotify("Не знайшли лот")
+            navigate(`/auction/${lot?.lot.auction_id}`);
+            return
+        }
         if (user) {
             const newSocket = io(SERVER_URL, {
                 auth: {
@@ -185,10 +190,15 @@ export default function LotPage() {
                         </CardHeader>
                         <CardBody className="pt-8">
                             <div className="flex justify-between">
-                                <small className="text-default-500 hover:cursor-pointer"
-                                       onClick={() => navigate(`/seller/${lot.lot.seller_id}`)}>
-                                    Seller: {lot.lot.seller_full_name}
-                                </small>
+                                <div>
+                                    <small className="text-default-500">Продавець: </small>
+                                    <Link className="hover:cursor-pointer"
+                                          size="sm"
+                                          showAnchorIcon
+                                          onClick={() => navigate(`/seller/${lot.lot.seller_id}`)}>
+                                        {lot.lot.seller_full_name}
+                                    </Link>
+                                </div>
                                 <Chip color={lot.status.color} className="hover:cursor-default">
                                     {lot.status.name}
                                 </Chip>
@@ -198,7 +208,7 @@ export default function LotPage() {
                     <Card className={LARGE_BOX_CARD}>
                         <Link className="text-sm mx-3.5 flex justify-end hover:cursor-pointer"
                               onClick={() => navigate(`/auction/${lot.lot.auction_id}`)}>
-                            Back to auction
+                            Повернутися до аукціону
                         </Link>
                         <CardHeader className="pb-0 pt-2 px-4 flex justify-center">
                             <p className="text-2xl font-bold">{lot.lot.lot_name}</p>
@@ -206,14 +216,14 @@ export default function LotPage() {
                         <CardBody className="flex flex-col">
                             <div className={boxStyle}>
                                 <p className="font-sans">
-                                    <strong>About: </strong>{lot.lot.lot_description}
+                                    <strong>Опис: </strong>{lot.lot.lot_description}
                                 </p>
                             </div>
                             <div className={boxStyle}>
                                 <p className="font-sans">
-                                    ({bets && bets.length} bets)
-                                    <strong>{lot.winner ? " Finish amount is " : " Current amount: "}  </strong>
-                                    {formatNumberWithSpaces((bets.length > 0 ? bets[0].amount : lot?.lot.lot_amount).toString())} UAH
+                                    <sup>(всього ставок: {bets && bets.length})</sup>
+                                    <strong> {lot.winner ? "Кінцева сума " : "Поточна сума: "}  </strong>
+                                    {formatNumberWithSpaces((bets.length > 0 ? bets[0].amount : lot?.lot.lot_amount).toString())} грн
                                 </p>
                             </div>
 
@@ -227,14 +237,14 @@ export default function LotPage() {
                                                 variant="bordered"
                                                 onClick={() => navigate('/login')}
                                                 color="secondary">
-                                            Login to start bet
+                                            Увійти, щоб поставити ставку
                                         </Button>
                                     )}
                                     {user && <>
 
                                         {bets.length === 0 && !lot.is_owner &&
                                             <Button color="warning" onClick={handleUpdate}>
-                                                Bet {lot.lot.lot_amount} UAH
+                                                Поставити {lot.lot.lot_amount} UAH
                                             </Button>
                                         }
 
@@ -248,7 +258,7 @@ export default function LotPage() {
                                             />
                                             <Button color="success" isDisabled={!userAmount.isMoreThanBet}
                                                     onClick={handleUpdate}>
-                                                Bet
+                                                Поставити
                                             </Button>
                                         </>
                                         }
@@ -261,7 +271,7 @@ export default function LotPage() {
                                                 value={String(userAmount.amount)}
                                                 className="w-1/4 mx-3.5"
                                             />
-                                            <Button color="warning" onClick={handleUpdate}>Set</Button>
+                                            <Button color="warning" onClick={handleUpdate}>Змінити</Button>
                                         </>
                                         }
                                     </>
@@ -271,11 +281,11 @@ export default function LotPage() {
                                     <div className="flex justify-center my-5">
                                         <Button onClick={() => setIsEdit(true)}
                                                 variant="light" color="success" className="sm:w-1/3 w-full mx-3.5">
-                                            Edit lot
+                                            Редагувати лот
                                         </Button>
                                         <Button onClick={submitFinishLot}
                                                 variant="light" color="danger" className="sm:w-1/3 w-full mx-3.5">
-                                            Finished lot
+                                            Завершити лот
                                         </Button>
                                     </div>
                                 )}

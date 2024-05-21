@@ -18,16 +18,16 @@ export function bytesToMegabytes(bytes: number): number {
 export function getInfoStatusById(id: number): IStatus {
     switch (id) {
         case 1:
-            return {id: 1, name: "open", color: "success"}
+            return {id: 1, name: "Відкритий", color: "success"}
         case 2:
-            return {id: 2, name: "only by url", color: "secondary"}
+            return {id: 2, name: "Тільки по посиланню", color: "secondary"}
         case 3:
-            return {id: 3, name: "closed", color: "danger"}
+            return {id: 3, name: "Закритий", color: "danger"}
         case 4:
-            return {id: 4, name: "finished", color: "warning"}
+            return {id: 4, name: "Завершений", color: "warning"}
         default:
             console.log("Unhandled id : ", id)
-            return {id: -1, name: "unhandled", color: "default"}
+            return {id: -1, name: "Невизначено", color: "default"}
     }
 }
 
