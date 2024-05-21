@@ -140,22 +140,26 @@ export default function Header() {
                         </DropdownTrigger>
                         <DropdownMenu aria-label="Profile Actions" variant="flat">
                             <DropdownItem key="profile"
-                                          href="/profile"
+                                          onTouchEnd={() => navigator('/profile')}
+                                          onClick={() => navigator(`/profile`)}
                                           className="h-10 gap-2">
                                 <p className="font-semibold"> Увійшли як {user?.username} </p>
                             </DropdownItem>
                             <DropdownItem key="settings"
+                                          onTouchEnd={() => navigator('/profile')}
                                           onClick={() => navigator('/profile')}>
                                 Мій особистий профіль
                             </DropdownItem>
                             <DropdownItem key="seller_profile"
-                                          href={`/seller/${user?.seller_id}`}
+                                          onTouchEnd={() => navigator(`/seller/${user?.seller_id}`)}
+                                          onClick={() => navigator(`/seller/${user?.seller_id}`)}
                                           className={isSeller ? '' : 'hidden'}
                             >
                                 Профіль продавця
                             </DropdownItem>
                             <DropdownItem key="become_seller"
-                                          href="/become.seller"
+                                          onTouchEnd={() => navigator('/become.seller')}
+                                          onClick={() => navigator('/become.seller')}
                                           color="secondary"
                                           className={isSeller || user?.seller_id ? 'hidden' : ''}
                             >
@@ -163,6 +167,7 @@ export default function Header() {
                             </DropdownItem>
                             <DropdownItem key="logout"
                                           color="danger"
+                                          onTouchEnd={logOut}
                                           onClick={logOut}>
                                 Вийти з акаунта
                             </DropdownItem>
