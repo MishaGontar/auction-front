@@ -291,7 +291,7 @@ export default function LotPage() {
                                 )}
                             </>)
                             }
-                            {bets.length === 0 && <p className="text-center">Поки немає ставок</p>}
+                            {bets.length === 0 && <p className="text-center my-10">Поки немає ставок</p>}
                             {bets.length > 0 &&
                                 <TableBets bets={bets} is_owner={lot.is_owner} onDelete={handleDeleteBet}/>}
                         </CardBody>
