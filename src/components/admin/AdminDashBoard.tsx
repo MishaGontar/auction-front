@@ -102,8 +102,8 @@ export default function AdminDashBoard() {
             <div className="flex flex-col gap-3">
                 <div className="flex justify-center items-center">
                     <div className="text-center mt-8">
-                        <h1 className="text-3xl font-bold text-gray-800">Всі Продавці</h1>
-                        <div className="w-20 h-1 bg-indigo-600 mx-auto mt-2 rounded"></div>
+                        <h1 className="text-3xl font-bold text-gray-800">Заявки продавців</h1>
+                        <div className="w-60 h-1 bg-indigo-600 mx-auto mt-2 rounded"></div>
                     </div>
                 </div>
                 <div className="flex gap-3 justify-end mx-5">

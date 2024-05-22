@@ -14,7 +14,7 @@ export default function Congratulation({lot}: { lot: ILotPageResponse }) {
             Вітаю! Ви виграли лот 🥳, надішліть гроші на
             <div className="flex flex-col items-center">
                 {lot.lot_bank_card_number &&
-                    <div className="flex flex-row" onClick={handleCardCopy}>
+                    <div className="flex flex-col sm:flex-row" onClick={handleCardCopy}>
                         <strong>Номер картки: </strong>
                         <p className="text-blue-500 cursor-pointer mx-1.5"> {lot.lot_bank_card_number}</p>
                         <small className="text-gray-500">(Клацніть щоб скопіювати)</small>
