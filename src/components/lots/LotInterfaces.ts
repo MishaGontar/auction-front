@@ -14,6 +14,7 @@ export interface ILot {
     amount: number
 }
 
+
 export interface ILotPageResponse {
     lot_id: number,
     lot_name: string,
@@ -24,10 +25,15 @@ export interface ILotPageResponse {
     lot_date_created: string,
     seller_id: number,
     seller_full_name: string,
+    seller_img_path: string,
     auction_id: number,
     auction_name: string,
     lot_status_id: number,
-    lot_status_name: string
+    lot_status_name: string,
+}
+
+export interface ILotDashResponse extends ILotPageResponse{
+    images: IImage[]
 }
 
 export interface ILotData {

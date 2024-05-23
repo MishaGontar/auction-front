@@ -28,7 +28,7 @@ import {validateCardNumber} from "../../utils/CardValidation.ts";
 
 interface IModalLotProps {
     isOpen: boolean,
-    auction: IAuction,
+    auction: IAuction | null | undefined,
     lot?: ILotData,
     onSubmit: () => void,
     closeModal: () => void,
@@ -47,8 +47,8 @@ export default function ModalLotForm({isOpen, auction, onSubmit, closeModal, lot
     const [lotForm, setLotForm] = useState<ILot>({
         name: lot?.lot.lot_name ?? '',
         description: lot?.lot.lot_description ?? '',
-        seller_id: lot?.lot.seller_id ?? auction?.seller_id,
-        auction_id: lot?.lot.auction_id ?? auction?.auction_id,
+        seller_id: lot?.lot.seller_id ?? auction?.seller_id ?? -1,
+        auction_id: lot?.lot.auction_id ?? auction?.auction_id ?? -1,
         status_id: lot?.lot.lot_status_id ?? 1,
         bank_card_number: lot?.lot.lot_bank_card_number ?? '',
         monobank_link: lot?.lot.lot_monobank_link ?? '',
@@ -65,7 +65,7 @@ export default function ModalLotForm({isOpen, auction, onSubmit, closeModal, lot
             .finally(() => setIsLoading(false))
     }, []);
 
-    const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
         if (event.target.files && event.target.files.length > 0) {
             const file = event.target.files[0];
 
@@ -82,16 +82,16 @@ export default function ModalLotForm({isOpen, auction, onSubmit, closeModal, lot
                 setShowAddButton(false);
             }
         }
-    };
+    }
 
-    const handleRemoveFile = (index: number) => {
+    function handleRemoveFile(index: number) {
         const updatedFiles = [...files];
         updatedFiles.splice(index, 1);
         setFiles(updatedFiles);
         setShowAddButton(true);
-    };
+    }
 
-    const handleInputChange = (field: keyof ILot, e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    function handleInputChange(field: keyof ILot, e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
         setErrorInputCard({
             bank_card: false,
             monobank: false,
@@ -100,9 +100,9 @@ export default function ModalLotForm({isOpen, auction, onSubmit, closeModal, lot
             ...prev,
             [field]: e.target.value,
         }));
-    };
+    }
 
-    const handleCardNumberChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    function handleCardNumberChange(e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
         setErrorInputCard({
             bank_card: false,
             monobank: false,
@@ -116,7 +116,7 @@ export default function ModalLotForm({isOpen, auction, onSubmit, closeModal, lot
             ...prev,
             ['bank_card_number']: inputCardNumber,
         }));
-    };
+    }
 
     function isIncorrectData(): boolean {
         const {bank_card_number, monobank_link} = lotForm;

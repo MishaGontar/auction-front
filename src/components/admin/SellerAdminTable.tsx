@@ -4,7 +4,6 @@ import axios from "axios";
 
 import SpinnerView from "../template/Spinner.tsx";
 import {
-    Chip,
     Input,
     Select,
     SelectItem,
@@ -21,17 +20,24 @@ import {ISeller} from "../seller/ISeller.ts";
 import {IStatus} from "../../utils/IStatus.ts";
 import {getAdminAuthConfig} from "../../utils/TokenUtils.ts";
 import {capitalizeFirstLetter} from "../../utils/CustomUtils.ts";
+import CustomChip from "../template/CustomChip.tsx";
+import SmallAvatar from "../template/SmallAvatar.tsx";
 
 
-const columns = [
+const columns: TableColumn[] = [
+    {key: "avatar", label: "Аватар"},
     {key: "full_name", label: "Повне ім'я"},
     {key: "email", label: "Електрона пошта"},
     {key: "username", label: "Ім'я користувача"},
     {key: "status", label: "Статус"},
 ];
 
+interface TableColumn {
+    key: string;
+    label: string
+}
 
-export default function AdminDashBoard() {
+export default function SellerAdminTable() {
     const [sellers, setSellers] = useState<ISeller[]>([]);
     const [loading, setLoading] = useState(true);
     const [clickedRow, setClickedRow] = useState<ISeller | undefined>()
@@ -100,12 +106,6 @@ export default function AdminDashBoard() {
         <AdminPage>
             {clickedRow && <ModalAboutSeller seller={clickedRow} onClose={resetRow} onChange={loadSellers}/>}
             <div className="flex flex-col gap-3">
-                <div className="flex justify-center items-center">
-                    <div className="text-center mt-8">
-                        <h1 className="text-3xl font-bold text-gray-800">Заявки продавців</h1>
-                        <div className="w-60 h-1 bg-indigo-600 mx-auto mt-2 rounded"></div>
-                    </div>
-                </div>
                 <div className="flex gap-3 justify-end mx-5">
                     <Input
                         placeholder="Пошук"
@@ -137,16 +137,13 @@ export default function AdminDashBoard() {
                                 key={item.username}
                                 className="hover:bg-amber-200"
                             >
+                                <TableCell>{<SmallAvatar path={item.image_url}/>}</TableCell>
                                 <TableCell>{item.full_name}</TableCell>
                                 <TableCell>{item.email}</TableCell>
                                 <TableCell>{item.username}</TableCell>
                                 <TableCell>
-                                    <Chip className="capitalize"
-                                          color={getColorByStatus(item.seller_status_id)}
-                                          size="sm"
-                                          variant="flat">
-                                        {item.seller_status}
-                                    </Chip>
+                                    <CustomChip color={getColorByStatus(item.seller_status_id)}
+                                                text={item.seller_status}/>
                                 </TableCell>
                             </TableRow>
                         )}

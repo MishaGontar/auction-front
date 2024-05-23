@@ -6,19 +6,7 @@ import {IMAGE_SIZE_STYLE, MAIN_BOX_CONTAINER, SERVER_URL, SMALL_BOX_CARD} from "
 import {capitalizeFirstLetter, ColorType, getInfoStatusById,} from "../../utils/CustomUtils.ts";
 import SpinnerView from "../template/Spinner.tsx";
 import {IAuction} from "./IAuction.ts";
-import {
-    Button,
-    Card,
-    CardBody,
-    CardHeader,
-    Chip,
-    Image,
-    Input,
-    Link,
-    Select,
-    SelectItem,
-    Textarea
-} from "@nextui-org/react";
+import {Button, Card, CardBody, CardHeader, Image, Input, Link, Select, SelectItem, Textarea} from "@nextui-org/react";
 import LotCardBody from "../lots/LotCardBody.tsx";
 import ModalLotForm from "../lots/ModalLotForm.tsx";
 import {ILot} from "../lots/LotInterfaces.ts";
@@ -29,6 +17,8 @@ import {getAuthConfig, getAuthFormDataConfig} from "../../utils/TokenUtils.ts";
 import {getErrorMessage} from "../../utils/ErrorUtils.ts";
 import {sendErrorNotify, sendInfoNotify, sendSuccessfulNotify} from "../../utils/NotifyUtils.ts";
 import {checkImageFile, getImagePath} from "../../utils/ImageUtils.ts";
+import CustomChip from "../template/CustomChip.tsx";
+import SmallAvatar from "../template/SmallAvatar.tsx";
 
 export default function AuctionPage() {
     const [isLoading, setIsLoading] = useState(true)
@@ -294,7 +284,7 @@ export default function AuctionPage() {
                             required
                             label="Статус аукціону"
                             placeholder="Віберіть статус"
-                            defaultSelectedKeys={[newAuction?.auction_status_id]}
+                            defaultSelectedKeys={[newAuction?.auction_status_id ?? "defaultValue"]}
                             className="my-1.5"
                             onChange={(e) => handleInputChange('auction_status_id', e)}
                         >
@@ -309,13 +299,13 @@ export default function AuctionPage() {
                         <h4 className=" text-balance font-bold text-large flex justify-center">{auction?.auction_name}</h4>
                         <p className="text-tiny font-sans my-2">{auction?.auction_description}</p>
                         <div className="flex justify-between my-2">
-                            <Chip color={color} className="hover:cursor-default">{auction?.auction_status}</Chip>
-                            <div>
-                                <small className="text-default-500">Продавець: </small>
+                            <CustomChip color={color} text={auction?.auction_status}/>
+                            <div className="flex justify-center items-center space-x-1.5">
                                 <Link className="hover:cursor-pointer"
                                       size="sm"
                                       showAnchorIcon
                                       onClick={() => navigate(`/seller/${auction?.seller_id}`)}>
+                                    <SmallAvatar path={auction?.seller_img_path}/>
                                     {auction?.seller_name}
                                 </Link>
                             </div>

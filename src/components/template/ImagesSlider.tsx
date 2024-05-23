@@ -1,4 +1,5 @@
 import {getImagePath, IImage} from "../../utils/ImageUtils.ts";
+// @ts-ignore
 import Slider from "react-slick";
 
 const slider_settings = {
@@ -13,7 +14,7 @@ const slider_settings = {
 };
 
 export default function ImagesSlider({images}: { images: IImage[] }) {
-    return (<div className="pb-0 pt-2 px-4 flex justify-center flex-col">
+    return (<div className="pb-5 pt-2 px-4 flex justify-center flex-col">
             {images && images.length > 0 && (
                 <div className="max-w-xs mx-auto">
                     {images.length === 1 && (

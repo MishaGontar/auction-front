@@ -14,7 +14,7 @@ export default function ButtonModalConfirmDelete({object, onAccept}: IModalConfi
     }
 
     return (<>
-        <Button onPress={onOpen} className="mt-3.5" variant="light" color="danger">Видалити</Button>
+        <Button onPress={onOpen} variant="light" color="danger">Видалити</Button>
         <Modal
             backdrop="opaque"
             placement="top-center"

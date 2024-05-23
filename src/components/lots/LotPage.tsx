@@ -9,7 +9,7 @@ import SpinnerView from "../template/Spinner.tsx";
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
-import {Button, Card, CardBody, CardHeader, Chip, Input, Link} from "@nextui-org/react";
+import {Button, Card, CardBody, CardHeader, Input, Link} from "@nextui-org/react";
 import "dayjs/plugin/timezone";
 import {IBet} from "./IBet.ts";
 import io, {Socket} from "socket.io-client";
@@ -21,6 +21,8 @@ import Congratulation from "./Congratulation.tsx";
 import ImagesSlider from "../template/ImagesSlider.tsx";
 import TableBets from "./TableBets.tsx";
 import {IWinner} from "./IWinner.ts";
+import CustomChip from "../template/CustomChip.tsx";
+import SmallAvatar from "../template/SmallAvatar.tsx";
 
 
 const boxStyle = "m-2.5 p-2.5 bg-gray-100 rounded";
@@ -191,17 +193,15 @@ export default function LotPage() {
                         <CardBody className="pt-8">
                             <div className="flex justify-between">
                                 <div>
-                                    <small className="text-default-500">Продавець: </small>
                                     <Link className="hover:cursor-pointer"
                                           size="sm"
                                           showAnchorIcon
                                           onClick={() => navigate(`/seller/${lot.lot.seller_id}`)}>
+                                        <SmallAvatar path={lot.lot.seller_img_path}/>
                                         {lot.lot.seller_full_name}
                                     </Link>
                                 </div>
-                                <Chip color={lot.status.color} className="hover:cursor-default">
-                                    {lot.status.name}
-                                </Chip>
+                                <CustomChip color={lot.status.color} text={lot.status.name}/>
                             </div>
                         </CardBody>
                     </Card>

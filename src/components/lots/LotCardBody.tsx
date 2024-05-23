@@ -1,4 +1,4 @@
-import {Button, Chip, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger} from "@nextui-org/react";
+import {Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger} from "@nextui-org/react";
 import {getInfoStatusById} from "../../utils/CustomUtils.ts";
 import {ILot} from "./LotInterfaces.ts";
 import {useNavigate} from "react-router-dom";
@@ -9,6 +9,8 @@ import SpinnerView from "../template/Spinner.tsx";
 import {getErrorMessage} from "../../utils/ErrorUtils.ts";
 import {getAuthConfig} from "../../utils/TokenUtils.ts";
 import {sendErrorNotify, sendSuccessfulNotify} from "../../utils/NotifyUtils.ts";
+import CustomChip from "../template/CustomChip.tsx";
+import {IStatus} from "../../utils/IStatus.ts";
 
 interface LotCardProps {
     is_owner?: boolean,
@@ -20,7 +22,7 @@ interface LotCardProps {
 export default function LotCardBody({lot, is_owner, onDelete}: LotCardProps) {
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
-    const lotInfo = lot.id != null ? getInfoStatusById(lot.status_id) : {name: "default", color: "default"};
+    const lotInfo: IStatus = getInfoStatusById(lot.status_id);
 
     function deleteLot() {
 
@@ -48,7 +50,7 @@ export default function LotCardBody({lot, is_owner, onDelete}: LotCardProps) {
         <div onClick={handleClick}
              className="flex flex-row justify-between rounded p-3 mt-3.5 hover:bg-gray-200 hover:cursor-pointer">
             <div className="w-1/2 font-sans text-large text-ellipsis overflow-hidden">{lot.name}</div>
-            <Chip color={lotInfo?.color ?? "default"} className="w-1/2 mx-3.5">{lotInfo?.name}</Chip>
+            <CustomChip color={lotInfo?.color ?? "default"} text={lotInfo?.name}/>
             {is_owner &&
                 <Dropdown>
                     <DropdownTrigger>

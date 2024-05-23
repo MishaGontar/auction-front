@@ -61,7 +61,6 @@ export default function LoginForm() {
                 error={error}
                 isLoading={isLoading}
                 link="/registration"
-                linkText="Створити новий акаунт"
             >
                 <Input
                     label="Ім'я користувача або електрона пошта"

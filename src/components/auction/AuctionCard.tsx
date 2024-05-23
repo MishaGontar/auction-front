@@ -1,9 +1,10 @@
-import {Chip, Image} from "@nextui-org/react";
+import {Image} from "@nextui-org/react";
 import {getImagePath} from "../../utils/ImageUtils.ts";
 import {convertToOnlyData, getInfoStatusById} from "../../utils/CustomUtils.ts";
 import {useNavigate} from "react-router-dom";
 import {IAuction} from "./IAuction.ts";
 import {IMAGE_SIZE_STYLE, TEXT_STYLE} from "../../constans.ts";
+import CustomChip from "../template/CustomChip.tsx";
 
 interface AuctionCardProps {
     auction: IAuction
@@ -35,10 +36,8 @@ export default function AuctionCard({auction}: AuctionCardProps) {
                     {auction.auction_name}
                 </div>
                 <div className="my-1.5">
-                    <Chip color={getInfoStatusById(auction.auction_status_id).color}
-                          className="hover:cursor-default">
-                        {auction.auction_status}
-                    </Chip>
+                    <CustomChip color={getInfoStatusById(auction.auction_status_id).color}
+                                text={auction.auction_status}/>
                 </div>
                 <div className={`${TEXT_STYLE} my-1.5`}>
                     Дата: {convertToOnlyData(auction.date_created)}

@@ -62,7 +62,6 @@ const RegistrationForm = () => {
                 error={error}
                 isLoading={isLoading}
                 link="/login"
-                linkText="Вже є аккаунт? Тиць"
             >
                 <Input
                     required
