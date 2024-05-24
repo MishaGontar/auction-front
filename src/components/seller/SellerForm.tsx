@@ -129,14 +129,14 @@ export default function SellerForm() {
                 onChange={(e) => handleInputChange('social_media', e)}
             />
             <Input
-                label="Адреса"
+                label="Адреса (необов'язково)"
                 minLength={5}
                 value={formSeller.address}
                 className="m-1.5"
                 onChange={(e) => handleInputChange('address', e)}
             />
             <Input
-                label="Телефон"
+                label="Телефон (необов'язково)"
                 minLength={12}
                 value={formSeller.phone_number}
                 className="m-1.5"
