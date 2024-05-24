@@ -28,7 +28,6 @@ export default function ModalAboutLot({data, onClose, handleClick}: ModalProps) 
 
     useEffect(() => {
         setLoading(true)
-        console.log(lot.lot_id)
         axios.get(`${SERVER_URL}/lot/images/${lot.lot_id}`, getAdminAuthConfig())
             .then(res => setImages(res.data.images))
             .catch(error => sendErrorNotify(getErrorMessage(error)))
@@ -51,7 +50,9 @@ export default function ModalAboutLot({data, onClose, handleClick}: ModalProps) 
                     </ModalHeader>
                     <ModalBody className="sm:mx-10">
                         <div className="bg-white shadow-md rounded-lg p-6 ">
-                            <ImagesSlider images={images}/>
+                            <div className="mb-14">
+                                <ImagesSlider images={images}/>
+                            </div>
 
                             <h2 className="text-xl font-semibold text-center mb-2">
                                 {lot.lot_name}

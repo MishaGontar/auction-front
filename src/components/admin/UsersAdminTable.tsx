@@ -10,7 +10,7 @@ import {IUser} from "../user/IUser.ts";
 import ButtonModalConfirmDelete from "../template/ButtonModalConfirmDelete.tsx";
 import {sendErrorNotify, sendSuccessfulNotify} from "../../utils/NotifyUtils.ts";
 import {getErrorMessage} from "../../utils/ErrorUtils.ts";
-import SmallAvatar from "../template/SmallAvatar.tsx";
+import ClickableAvatar from "../template/ClickableAvatar.tsx";
 
 
 const columns: TableColumn[] = [
@@ -42,7 +42,7 @@ export default function UserAdminTable() {
                 console.table(response.data.users)
                 setUsers(response.data.users)
             })
-            .catch(error => console.log(error))
+            .catch(error => sendErrorNotify(getErrorMessage(error)))
             .finally(() => setLoading(false));
     }
 
@@ -62,7 +62,6 @@ export default function UserAdminTable() {
         axios.delete(`${SERVER_URL}/user/delete/${id}/${seller_id}`, getAdminAuthConfig())
             .then(res => {
                 const data = res.data;
-                console.log(data)
                 sendSuccessfulNotify(`Користувача ${data.user.username} видалено успішно`)
                 loadUsers()
             })
@@ -95,7 +94,7 @@ export default function UserAdminTable() {
                                 key={item.username}
                                 className="hover:bg-amber-200"
                             >
-                                <TableCell><SmallAvatar path={item.image_url}/></TableCell>
+                                <TableCell><ClickableAvatar path={item.image_url}/></TableCell>
                                 <TableCell>{item.username}</TableCell>
                                 <TableCell>{item.email}</TableCell>
                                 <TableCell>

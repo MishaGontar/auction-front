@@ -187,7 +187,7 @@ export default function LotPage() {
                 }
                 <div className={MAIN_BOX_CONTAINER}>
                     <Card className={SMALL_BOX_CARD}>
-                        <CardHeader>
+                        <CardHeader className="flex justify-center items-center mb-10">
                             <ImagesSlider images={lot.images}/>
                         </CardHeader>
                         <CardBody className="pt-8">

@@ -22,6 +22,8 @@ import {getAdminAuthConfig} from "../../utils/TokenUtils.ts";
 import {capitalizeFirstLetter} from "../../utils/CustomUtils.ts";
 import CustomChip from "../template/CustomChip.tsx";
 import SmallAvatar from "../template/SmallAvatar.tsx";
+import {sendErrorNotify} from "../../utils/NotifyUtils.ts";
+import {getErrorMessage} from "../../utils/ErrorUtils.ts";
 
 
 const columns: TableColumn[] = [
@@ -50,7 +52,7 @@ export default function SellerAdminTable() {
         setLoading(true)
         axios.get(`${SERVER_URL}/sellers/status`, getAdminAuthConfig())
             .then(response => setStatus(response.data.status))
-            .catch(error => console.log(error))
+            .catch(error => sendErrorNotify(getErrorMessage(error)))
             .finally(() => setLoading(false));
         loadSellers();
     }, []);
@@ -59,7 +61,7 @@ export default function SellerAdminTable() {
         setLoading(true);
         axios.get(`${SERVER_URL}/sellers`, getAdminAuthConfig())
             .then(response => setSellers(response.data.sellers))
-            .catch(error => console.log(error))
+            .catch(error => sendErrorNotify(getErrorMessage(error)))
             .finally(() => setLoading(false));
     }
 

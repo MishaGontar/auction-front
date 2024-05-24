@@ -79,7 +79,7 @@ export default function AuctionsLotsAdminTable() {
                 })
                 setListData(newData)
             })
-            .catch(error => console.log(error))
+            .catch(error => sendErrorNotify(getErrorMessage(error)))
             .finally(() => setLoading(false));
     }
 

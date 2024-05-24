@@ -11,12 +11,12 @@ import {IAuction} from "../auction/IAuction.ts";
 import {Card, CardBody, CardHeader} from "@nextui-org/react";
 import AuctionCard from "../auction/AuctionCard.tsx";
 import {getImagePath} from "../../utils/ImageUtils.ts";
+import ImageModal from "../template/ImageModal.tsx";
 
 export default function SellerProfile() {
     const [isLoading, setIsLoading] = useState(true)
     const [seller, setSeller] = useState<ISellerProfile | null>(null)
     const [auctions, setAuctions] = useState<IAuction[] | null>(null)
-    const [isOwner, setIsOwner] = useState(false)
     const {user} = useAuth()
     const {id} = useParams()
     const navigator = useNavigate()
@@ -29,12 +29,11 @@ export default function SellerProfile() {
                 const auctionsData = res.data.auctions;
 
                 setSeller(sellerData);
-                setIsOwner(user?.seller_id === sellerData.seller_id);
 
                 if (user?.seller_id === sellerData.seller_id) {
                     setAuctions(auctionsData);
                 } else {
-                    setAuctions(auctionsData.filter(a => a.auction_status_id === 1));
+                    setAuctions(auctionsData.filter((a:IAuction) => a.auction_status_id === 1));
                 }
             })
             .catch(error => {
@@ -71,8 +70,10 @@ export default function SellerProfile() {
             <Card className={`${SMALL_BOX_CARD} order-first sm:order-last`}>
                 <div className="flex flex-col items-center">
                     <CardHeader className="flex flex-col items-center">
-                        <img src={getImagePath(seller?.image_url)} alt={"Avatar"}
-                             className="w-[150px] h-auto"/>
+                        <ImageModal img_path={getImagePath(seller?.image_url)}>
+                            <img src={getImagePath(seller?.image_url)} alt={"Avatar"}
+                                 className="w-[150px] h-auto rounded"/>
+                        </ImageModal>
                     </CardHeader>
                     <div className="mx-1.5">
                         <h1 className={TEXT_STYLE}><strong>Продавець : </strong> {seller?.full_name}</h1>

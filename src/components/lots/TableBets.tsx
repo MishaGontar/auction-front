@@ -1,7 +1,7 @@
 import {IBet} from "./IBet.ts";
 import {Button, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow} from "@nextui-org/react";
 import {convertToKyivTime, formatNumberWithSpaces} from "../../utils/CustomUtils.ts";
-import SmallAvatar from "../template/SmallAvatar.tsx";
+import ClickableAvatar from "../template/ClickableAvatar.tsx";
 
 interface Props {
     is_owner: boolean,
@@ -29,7 +29,7 @@ export default function TableBets({is_owner, bets, onDelete}: Props) {
                     <TableRow key={bet.bet_id}
                               className={"hover:bg-amber-100"}>
                         <TableCell>
-                            <SmallAvatar path={bet.user_img_url ?? "/images/user_logo_standard.png"}/>
+                            <ClickableAvatar path={bet.user_img_url ?? "/images/user_logo_standard.png"}/>
                         </TableCell>
                         <TableCell>{bet.username ?? "Власник"}</TableCell>
                         <TableCell>{formatNumberWithSpaces(String(bet.amount))} грн</TableCell>

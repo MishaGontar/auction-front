@@ -19,6 +19,7 @@ import {sendErrorNotify, sendInfoNotify, sendSuccessfulNotify} from "../../utils
 import {checkImageFile, getImagePath} from "../../utils/ImageUtils.ts";
 import CustomChip from "../template/CustomChip.tsx";
 import SmallAvatar from "../template/SmallAvatar.tsx";
+import ImageModal from "../template/ImageModal.tsx";
 
 export default function AuctionPage() {
     const [isLoading, setIsLoading] = useState(true)
@@ -70,7 +71,6 @@ export default function AuctionPage() {
                     navigate('/auctions')
                     return
                 }
-                console.log(error)
                 sendErrorNotify(getErrorMessage(error))
             })
             .finally(() => setIsLoading(false))
@@ -215,13 +215,15 @@ export default function AuctionPage() {
         <div className={MAIN_BOX_CONTAINER}>
             <Card className={SMALL_BOX_CARD}>
                 <CardHeader className={"pb-0 pt-2 px-4 flex justify-center flex-col"}>
-                    <Image
-                        isZoomed
-                        isBlurred
-                        alt="Card background"
-                        className={`${IMAGE_SIZE_STYLE}`}
-                        src={getImagePath(auction?.auction_img_path)}
-                    />
+                    <ImageModal img_path={getImagePath(auction?.auction_img_path)}>
+                        <Image
+                            isZoomed
+                            isBlurred
+                            alt="Card background"
+                            className={`${IMAGE_SIZE_STYLE}`}
+                            src={getImagePath(auction?.auction_img_path)}
+                        />
+                    </ImageModal>
                     {isEditMode && <>
                         {selectedNewImage &&
                             <div className="flex sm:flex-row flex-col items-center gap-4 my-5">

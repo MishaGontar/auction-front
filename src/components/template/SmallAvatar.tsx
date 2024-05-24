@@ -1,7 +1,11 @@
 import {getImagePath} from "../../utils/ImageUtils.ts";
 import {Avatar} from "@nextui-org/react";
 
-export default function SmallAvatar({path}: { path: string | null | undefined }) {
+export interface IPath {
+    path: string | null | undefined
+}
+
+export default function SmallAvatar({path}: IPath) {
     return (
         <Avatar src={getImagePath(path ?? "")}
                 alt="avatar"

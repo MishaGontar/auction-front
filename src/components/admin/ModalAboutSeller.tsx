@@ -6,6 +6,7 @@ import SpinnerView from "../template/Spinner.tsx";
 import {ISeller} from "../seller/ISeller.ts";
 import {getAdminAuthConfig} from "../../utils/TokenUtils.ts";
 import {sendErrorNotify, sendInfoNotify} from "../../utils/NotifyUtils.ts";
+import ImageModal from "../template/ImageModal.tsx";
 
 interface SellerModalProps {
     seller: ISeller;
@@ -55,10 +56,13 @@ export default function ModalAboutSeller({seller, onClose, onChange}: SellerModa
                     </ModalHeader>
                     <ModalBody className="sm:mx-10">
                         <div className="bg-white shadow-md rounded-lg p-6 ">
-                            <img src={`${SERVER_URL}${seller.image_url}`}
-                                 alt={seller.full_name}
-                                 className="rounded-full w-20 h-20 mx-auto mb-4"/>
-
+                            <div className="flex justify-center">
+                                <ImageModal img_path={`${SERVER_URL}${seller.image_url}`}>
+                                    <img src={`${SERVER_URL}${seller.image_url}`}
+                                         alt={seller.full_name}
+                                         className="w-[100px] sm:w-[200px] md:w-[150px] h-auto"/>
+                                </ImageModal>
+                            </div>
                             <h2 className="text-xl font-semibold text-center mb-2">
                                 {seller.full_name}
                             </h2>

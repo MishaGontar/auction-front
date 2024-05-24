@@ -7,6 +7,7 @@ import CustomChip from "../template/CustomChip.tsx";
 import {convertToKyivTime} from "../../utils/CustomUtils.ts";
 import {ILotPageResponse} from "../lots/LotInterfaces.ts";
 import ButtonModalConfirmDelete from "../template/ButtonModalConfirmDelete.tsx";
+import ImageModal from "../template/ImageModal.tsx";
 
 interface ModalProps {
     data: IData;
@@ -40,10 +41,11 @@ export default function ModalAboutAuction({data, dataList, onClose, handleClick}
                 </ModalHeader>
                 <ModalBody className="sm:mx-10">
                     <div className="bg-white shadow-md rounded-lg p-6 ">
-                        <img src={`${SERVER_URL}${auction.auction_img_path}`}
-                             alt={auction.auction_name}
-                             className=" w-120 h-120 mx-auto mb-4"/>
-
+                        <ImageModal img_path={`${SERVER_URL}${auction.auction_img_path}`}>
+                            <img src={`${SERVER_URL}${auction.auction_img_path}`}
+                                 alt={auction.auction_name}
+                                 className=" w-120 h-120 mx-auto mb-2"/>
+                        </ImageModal>
                         <h2 className="text-xl font-semibold text-center mb-2">
                             {auction.auction_name}
                         </h2>

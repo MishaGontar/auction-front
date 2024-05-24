@@ -13,6 +13,7 @@ import {getErrorMessage} from "../../utils/ErrorUtils.ts";
 import SpinnerView from "../template/Spinner.tsx";
 import ButtonModalConfirmDelete from "../template/ButtonModalConfirmDelete.tsx";
 import {useNavigate} from "react-router-dom";
+import ImageModal from "../template/ImageModal.tsx";
 
 
 export default function Profile() {
@@ -103,14 +104,16 @@ export default function Profile() {
                         <div className="flex justify-between">
                             {file && <>
                                 <img src={URL.createObjectURL(file)} alt={`slide-${0}`}
-                                     className="w-[100px] sm:w-[200px] md:w-[150px] h-auto"/>
+                                     className="w-[100px] sm:w-[200px] md:w-[150px] h-auto rounded"/>
                                 <div className="mx-1.5 flex justify-center items-center">
                                     <img src="/arrow-right.svg" alt="Arrow right"/>
                                 </div>
                             </>}
 
-                            <img src={getImagePath(user?.image_url)} alt={`slide-${0}`}
-                                 className={`${file !== null ? "w-[100px]" : "w-[200px]"} sm:w-[200px] md:w-[150px] h-auto`}/>
+                            <ImageModal img_path={getImagePath(user?.image_url)}>
+                                <img src={getImagePath(user?.image_url)} alt={`slide-${0}`}
+                                     className={`${file !== null ? "w-[100px]" : "w-[200px]"} sm:w-[200px] md:w-[150px] h-auto rounded`}/>
+                            </ImageModal>
                         </div>
                         {file &&
                             <div className="my-5 space-x-5 w-full flex justify-center">

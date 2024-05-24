@@ -5,6 +5,7 @@ import axios from "axios";
 import {SERVER_URL} from "../../constans.ts";
 import {getAdminAuthConfig, getAdminToken, getAuthToken} from "../../utils/TokenUtils.ts";
 import {getErrorMessage} from "../../utils/ErrorUtils.ts";
+import {sendErrorNotify} from "../../utils/NotifyUtils.ts";
 
 export default function AdminPage({children}: { children: ReactNode }) {
     const [isLoading, setIsLoading] = useState(true);
@@ -17,10 +18,10 @@ export default function AdminPage({children}: { children: ReactNode }) {
             if (!getAdminToken()) navigate("/admin/login")
 
             axios.post(`${SERVER_URL}/admin/check`, {}, getAdminAuthConfig())
-                .then(response => console.log("Status OK", response))
+                .then(() => {})
                 .catch(e => {
-                    console.log(e)
                     setError(getErrorMessage(e))
+                    sendErrorNotify(getErrorMessage(e))
                 })
                 .finally(() => setIsLoading(false))
         },
