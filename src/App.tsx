@@ -11,6 +11,7 @@ import LotPage from "./components/lots/LotPage.tsx";
 import SellerProfile from "./components/seller/SellerProfile.tsx";
 import AdvanceAdminDashBoard from "./components/admin/AdvanceAdminDashBoard.tsx";
 import MainAuthPage from "./components/auth/MainAuthPage.tsx";
+import NotFound from "./components/NotFound.tsx";
 
 function App() {
     return (
@@ -35,6 +36,8 @@ function App() {
                 {/*ADMIN ROUTER*/}
                 <Route path='/admin/login' element={<AdminLoginForm/>}/>
                 <Route path='/admin/dashboard' element={<AdvanceAdminDashBoard/>}/>
+
+                <Route path='*' element={<NotFound/>}/>
             </Routes>
         </BrowserRouter>
     )

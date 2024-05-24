@@ -103,13 +103,14 @@ export default function Profile() {
                         <div className="flex justify-between">
                             {file && <>
                                 <img src={URL.createObjectURL(file)} alt={`slide-${0}`}
-                                     className="w-[150px] h-auto rounded-full"/>
+                                     className="w-[100px] sm:w-[200px] md:w-[150px] h-auto"/>
                                 <div className="mx-1.5 flex justify-center items-center">
                                     <img src="/arrow-right.svg" alt="Arrow right"/>
                                 </div>
                             </>}
+
                             <img src={getImagePath(user?.image_url)} alt={`slide-${0}`}
-                                 className="w-[150px] h-auto rounded-full "/>
+                                 className={`${file !== null ? "w-[100px]" : "w-[200px]"} sm:w-[200px] md:w-[150px] h-auto`}/>
                         </div>
                         {file &&
                             <div className="my-5 space-x-5 w-full flex justify-center">
