@@ -5,7 +5,7 @@ import {SERVER_URL} from './../../constans.ts';
 import FormTemplate from '../template/FormTemplate.tsx';
 import PasswordInput from '../template/PasswordInput.tsx';
 import ModalEnterCode from './ModalEnterCode.tsx';
-import {saveMfaToken} from "../../utils/TokenUtils.ts";
+import {removeMfaToken, saveMfaToken} from "../../utils/TokenUtils.ts";
 
 const initialFormData = {
     username: '',
@@ -52,9 +52,14 @@ const RegistrationForm = () => {
             .finally(() => setIsLoading(false));
     };
 
+    function handleCloseModal(){
+        removeMfaToken();
+        setShowModal(false);
+    }
+
     return (
         <>
-            {showModal && <ModalEnterCode username_or_email={formData.email} isOpen={showModal}/>}
+            {showModal && <ModalEnterCode username_or_email={formData.email} isOpen={showModal} onClose={handleCloseModal}/>}
             <FormTemplate
                 title="Реєстрація"
                 submitBtnTxt="Зареєструватись"

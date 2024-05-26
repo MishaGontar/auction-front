@@ -9,55 +9,63 @@ import {getMfaAuthConfig, removeMfaToken, saveAuthToken} from "../../utils/Token
 
 export interface IModalProps {
     isOpen: boolean,
+    onClose: () => void,
     username_or_email: string,
 }
 
-export default function ModalEnterCode({isOpen, username_or_email}: IModalProps) {
-    const [code, setCode] = useState('')
-    const [isLoading, setIsLoading] = useState(true)
+export default function ModalEnterCode({isOpen, onClose, username_or_email}: IModalProps) {
+    const [code, setCode] = useState('');
+    const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState('');
     const [user, setUser] = useState<IUser>();
     const navigate = useNavigate();
 
     useEffect(() => {
-        axios.get(`${SERVER_URL}/user`, getMfaAuthConfig())
-            .then(res => {
-                setUser(res.data)
-            })
-            .catch((error: ErrorResponse) => console.log(getErrorMessage(error)))
-            .finally(() => setIsLoading(false))
-    }, []);
+        if (isOpen) {
+            axios.get(`${SERVER_URL}/user`, getMfaAuthConfig())
+                .then(res => {
+                    setUser(res.data);
+                })
+                .catch((error: ErrorResponse) => console.log(getErrorMessage(error)))
+                .finally(() => setIsLoading(false));
+        }
+    }, [isOpen]);
 
     function confirmCode() {
-
         const data = {
             login: username_or_email,
             code: code
-        }
+        };
 
-        setIsLoading(true)
-        setError('')
+        setIsLoading(true);
+        setError('');
         axios
             .post(`${SERVER_URL}/auth/code`, data, getMfaAuthConfig())
             .then(response => {
-                removeMfaToken()
-                saveAuthToken(response.data.token)
-                navigate('/auctions')
+                removeMfaToken();
+                saveAuthToken(response.data.token);
+                navigate('/auctions');
+                onClose();  // Закриваємо модалку після успішного підтвердження коду
             })
             .catch((error: ErrorResponse) => setError(getErrorMessage(error)))
-            .finally(() => setIsLoading(false))
+            .finally(() => setIsLoading(false));
     }
 
     return (
         <Modal
             backdrop="blur"
             isOpen={isOpen}
+            onClose={onClose}
             placement="top-center"
         >
             <ModalContent>
-                <ModalHeader className="flex flex-col gap-1">Підтвердьте свою особу</ModalHeader>
+                <ModalHeader className="flex flex-col gap-1">
+                    Підтвердьте свою особу
+                </ModalHeader>
                 <ModalBody>
-                    <div>Ми надіслали код на <strong>{user?.email ?? username_or_email}</strong> щоб підтвердити що це ви.</div>
+                    <div>Ми надіслали код на <strong>{user?.email ?? username_or_email}</strong> щоб підтвердити що це
+                        ви.
+                    </div>
                     {error && <div className="text-red-500">{error}</div>}
                     <Input
                         readOnly={isLoading}
@@ -75,5 +83,5 @@ export default function ModalEnterCode({isOpen, username_or_email}: IModalProps)
                 </ModalFooter>
             </ModalContent>
         </Modal>
-    )
+    );
 }

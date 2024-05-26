@@ -5,7 +5,7 @@ import PasswordInput from '../template/PasswordInput.tsx';
 import FormTemplate from '../template/FormTemplate.tsx';
 import ModalEnterCode from './ModalEnterCode.tsx';
 import {SERVER_URL} from "../../constans.ts";
-import {saveMfaToken} from "../../utils/TokenUtils.ts";
+import {removeMfaToken, saveMfaToken} from "../../utils/TokenUtils.ts";
 import {getErrorMessage} from "../../utils/ErrorUtils.ts";
 
 interface FormData {
@@ -51,9 +51,15 @@ export default function LoginForm() {
             });
     };
 
+    function handleCloseModal() {
+        removeMfaToken();
+        setShowModal(false);
+    }
+
     return (
         <>
-            {showModal && <ModalEnterCode username_or_email={formData.login} isOpen={showModal}/>}
+            {showModal &&
+                <ModalEnterCode username_or_email={formData.login} isOpen={showModal} onClose={handleCloseModal}/>}
             <FormTemplate
                 title="Вхід в систему"
                 submitBtnTxt="Вхід"
