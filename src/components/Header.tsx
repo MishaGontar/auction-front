@@ -20,6 +20,7 @@ import axios from "axios";
 import {SERVER_URL} from "../constans.ts";
 import {useAuth} from "../provider/AuthProvider.tsx";
 import {getAdminToken, getAuthConfig, getAuthToken} from "../utils/TokenUtils.ts";
+import {getErrorMessage} from "../utils/ErrorUtils.ts";
 
 interface IMenuItem {
     color: ColorTypeSecond,
@@ -65,13 +66,16 @@ export default function Header() {
     }, [isSeller, isAdmin, user]);
 
     useEffect(() => {
-        console.log("update")
         axios.get(`${SERVER_URL}/user`, getAuthConfig())
             .then(response => {
-                console.table(response.data)
                 login(response.data)
             })
-            .catch(e => console.error(e))
+            .catch(e => {
+                console.error(getErrorMessage(e))
+                if (e.response.status === 403 || e.response.status === 400) {
+                    logout()
+                }
+            })
     }, [window.location.href])
 
     function ifNotExistPush(url: string, menuItem: IMenuItem) {
