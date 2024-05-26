@@ -52,7 +52,6 @@ export default function Header() {
     const isAdmin = getAdminToken()
     const isSeller = isLogin && (user?.status_id === 2)
 
-
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [menuItems, setMenuItems] = useState<IMenuItem[]>([initMenu])
 
@@ -66,20 +65,14 @@ export default function Header() {
     }, [isSeller, isAdmin, user]);
 
     useEffect(() => {
-        if (!isLogin) {
-            return;
-        }
-
-        if (user) {
-            return;
-        }
-
+        console.log("update")
         axios.get(`${SERVER_URL}/user`, getAuthConfig())
             .then(response => {
+                console.table(response.data)
                 login(response.data)
             })
             .catch(e => console.error(e))
-    }, [isLogin, login, user])
+    }, [window.location.href])
 
     function ifNotExistPush(url: string, menuItem: IMenuItem) {
         setMenuItems(prevItems => {
