@@ -54,7 +54,7 @@ export default function LotPage() {
             navigate(`/auction/${lot?.lot.auction_id}`);
             return
         }
-        if (user) {
+        if (user && !lot?.is_blocked) {
             const newSocket = io(SERVER_URL, {
                 auth: {
                     token: getAuthToken()
@@ -62,11 +62,13 @@ export default function LotPage() {
                 query: {
                     user: JSON.stringify(user),
                     is_owner: lot?.is_owner,
-                    lotId: id
+                    lotId: id,
+                    sellerId: lot?.lot.seller_id
                 }
             });
 
             newSocket.on('updatedBet', handleUpdatedBet);
+            newSocket.on('blockUser', getLot);
             newSocket.on('finishedLot', getLot)
             setSocket(newSocket);
         }
@@ -103,7 +105,7 @@ export default function LotPage() {
                     ? convertFormattedAmountToNumber(userAmount.amount)
                     : lot?.lot.lot_amount)
                 || 0
-            if (!lot?.is_owner && !userAmount.isMoreThanBet && bets.length > 0) {
+            if (!lot?.is_owner && !userAmount.isMoreThanBet && bets.length > 0 && lot?.is_blocked) {
                 return
             }
             socket.emit('updatedBet', sendAmount);
@@ -131,7 +133,8 @@ export default function LotPage() {
                     lot: lot,
                     images: response.data.images,
                     is_owner: is_owner,
-                    status: getInfoStatusById(lot.lot_status_id)
+                    status: getInfoStatusById(lot.lot_status_id),
+                    is_blocked: response.data.is_blocked
                 })
                 const initAmount = bets.length > 0 ? bets[0].amount : lot.lot_amount;
                 setUserAmount({
@@ -165,6 +168,13 @@ export default function LotPage() {
             return
         }
         socket.emit("finishedLot")
+    }
+
+    function handleBlockUserById(id: number) {
+        if (!socket) {
+            return
+        }
+        socket.emit('blockUser', id)
     }
 
     function onSubmitLotEdit() {
@@ -230,7 +240,15 @@ export default function LotPage() {
                             {lot.winner && user?.user_id === lot.winner?.user_id && (
                                 <Congratulation lot={lot.lot}/>
                             )}
-                            {!lot.winner && (<>
+                            {!lot.winner && lot?.is_blocked && (
+                                <div className="flex justify-center">
+                                    <div className="text-red-500 border-1 border-red-500 p-2 rounded font-bold w-fit">
+                                        Вас було заблоковано продавцем
+                                    </div>
+                                </div>
+                            )
+                            }
+                            {!lot.winner && !lot?.is_blocked && (<>
                                 <div className="flex justify-center">
                                     {!user && (
                                         <Button className="mx-3.5 w-3/5"
@@ -271,7 +289,7 @@ export default function LotPage() {
                                                 value={String(userAmount.amount)}
                                                 className="w-1/4 mx-3.5"
                                             />
-                                            <Button color="warning" onClick={handleUpdate}>Змінити</Button>
+                                            <Button color="warning" onClick={handleUpdate}>Поставити</Button>
                                         </>
                                         }
                                     </>
@@ -293,7 +311,12 @@ export default function LotPage() {
                             }
                             {bets.length === 0 && <p className="text-center my-10">Поки немає ставок</p>}
                             {bets.length > 0 &&
-                                <TableBets bets={bets} is_owner={lot.is_owner} onDelete={handleDeleteBet}/>}
+                                <TableBets
+                                    bets={bets}
+                                    is_owner={lot.is_owner}
+                                    onDelete={handleDeleteBet}
+                                    onBlockUser={handleBlockUserById}
+                                />}
                         </CardBody>
                     </Card>
                 </div>

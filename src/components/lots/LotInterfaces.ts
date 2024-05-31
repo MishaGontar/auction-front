@@ -32,12 +32,13 @@ export interface ILotPageResponse {
     lot_status_name: string,
 }
 
-export interface ILotDashResponse extends ILotPageResponse{
+export interface ILotDashResponse extends ILotPageResponse {
     images: IImage[]
 }
 
 export interface ILotData {
-    winner: IWinner
+    winner: IWinner,
+    is_blocked: boolean,
     lot: ILotPageResponse,
     images: IImage[],
     is_owner: boolean,

@@ -2,21 +2,25 @@ import {useAuth} from "../../provider/AuthProvider.tsx";
 import {useNavigate, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import axios from "axios";
-import {LARGE_BOX_CARD, MAIN_BOX_CONTAINER, SERVER_URL, SMALL_BOX_CARD, TEXT_STYLE} from "../../constans.ts";
+import {MAIN_BOX_CONTAINER, SERVER_URL, SMALL_BOX_CARD, TEXT_STYLE} from "../../constans.ts";
 import {sendErrorNotify} from "../../utils/NotifyUtils.ts";
 import {getErrorMessage} from "../../utils/ErrorUtils.ts";
 import SpinnerView from "../template/Spinner.tsx";
 import {ISellerProfile} from "./ISellerProfile.ts";
 import {IAuction} from "../auction/IAuction.ts";
-import {Card, CardBody, CardHeader} from "@nextui-org/react";
-import AuctionCard from "../auction/AuctionCard.tsx";
+import {Card, CardHeader, Tab, Tabs} from "@nextui-org/react";
 import {getImagePath} from "../../utils/ImageUtils.ts";
 import ImageModal from "../template/ImageModal.tsx";
+import SellerAllAuctions from "./SellerAllAuctions.tsx";
+import SellerBanUsers from "./SellerBanUsers.tsx";
 
 export default function SellerProfile() {
     const [isLoading, setIsLoading] = useState(true)
     const [seller, setSeller] = useState<ISellerProfile | null>(null)
     const [auctions, setAuctions] = useState<IAuction[] | null>(null)
+    const [isOwner, setIsOwner] = useState(false)
+    const [selected, setSelected] = useState("auctions");
+
     const {user} = useAuth()
     const {id} = useParams()
     const navigator = useNavigate()
@@ -29,11 +33,11 @@ export default function SellerProfile() {
                 const auctionsData = res.data.auctions;
 
                 setSeller(sellerData);
-
+                setIsOwner(user?.seller_id === sellerData.seller_id);
                 if (user?.seller_id === sellerData.seller_id) {
                     setAuctions(auctionsData);
                 } else {
-                    setAuctions(auctionsData.filter((a:IAuction) => a.auction_status_id === 1));
+                    setAuctions(auctionsData.filter((a: IAuction) => a.auction_status_id === 1));
                 }
             })
             .catch(error => {
@@ -51,22 +55,37 @@ export default function SellerProfile() {
     }
     return (
         <div className={MAIN_BOX_CONTAINER}>
-            <Card className={`${LARGE_BOX_CARD}`}>
-                <CardHeader className="pb-0 pt-2 px-4 flex justify-center py-5">
-                    <p className="text-3xl font-bold">Всі аукціони</p>
-                </CardHeader>
-                <CardBody>
-                    {auctions && auctions.length === 0 &&
-                        <p className="text-center">Ви ще не
-                            <strong className="text-blue-500 cursor-pointer"
-                                    onClick={() => navigator('/create/auction')}> створили </strong>
-                            жодного аукціону
-                        </p>
-                    }
-                    {auctions && auctions.length > 0 &&
-                        auctions.map(auction => <AuctionCard key={auction.auction_id} auction={auction}/>)}
-                </CardBody>
-            </Card>
+            {isOwner && <div className="w-full sm:w-1/2">
+                <Tabs
+                    aria-label="Options"
+                    className="my-1.5 flex justify-center items-center"
+                    selectedKey={selected}
+                    onSelectionChange={(key) => setSelected(key.toString())}
+                >
+                    <Tab key="auctions"
+                         className=""
+                         title={
+                             <div className="flex items-center space-x-2 w-fit justify-center p-1.5">
+                                 <img src="/auction-24.png" alt="аукціони" className="w-6 h-6"/>
+                                 <span>Аукціони</span>
+                             </div>
+                         }
+                    >
+                        <SellerAllAuctions auctions={auctions}/>
+                    </Tab>
+                    <Tab key="auctions2"
+                         title={
+                             <div className="flex items-center space-x-2 w-fit justify-center p-1.5">
+                                 <img src="/block.svg" alt="Увійти лого" className="w-6 h-6"/>
+                                 <span>Заблоковані користувачі</span>
+                             </div>
+                         }
+                    >
+                        <SellerBanUsers seller_id={user?.seller_id}/>
+                    </Tab>
+                </Tabs>
+            </div>}
+            {!isOwner && <SellerAllAuctions auctions={auctions}/>}
             <Card className={`${SMALL_BOX_CARD} order-first sm:order-last`}>
                 <div className="flex flex-col items-center">
                     <CardHeader className="flex flex-col items-center">
