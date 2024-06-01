@@ -25,7 +25,9 @@ export function getInfoStatusById(id: number): IStatus {
         case 3:
             return {id: 3, name: "Закритий", color: "danger"}
         case 4:
-            return {id: 4, name: "Завершений", color: "warning"}
+            return {id: 4, name: "Продано", color: "warning"}
+        case 5:
+            return {id: 5, name: "Завершений", color: "warning"}
         default:
             console.log("Unhandled id : ", id)
             return {id: -1, name: "Невизначено", color: "default"}

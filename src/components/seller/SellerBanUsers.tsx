@@ -15,14 +15,21 @@ import {useEffect, useState} from "react";
 import SpinnerView from "../template/Spinner.tsx";
 import axios from "axios";
 import {getAuthConfig} from "../../utils/TokenUtils.ts";
-import {IUser} from "../user/IUser.ts";
 import {sendErrorNotify, sendSuccessfulNotify} from "../../utils/NotifyUtils.ts";
 import {getErrorMessage} from "../../utils/ErrorUtils.ts";
 import ClickableAvatar from "../template/ClickableAvatar.tsx";
+import {convertToKyivTime} from "../../utils/CustomUtils.ts";
+
+interface IUserTable {
+    user_id: number,
+    username: string,
+    image_url: string;
+    date_created: string
+}
 
 export default function SellerBanUsers({seller_id}: { seller_id: number | undefined }) {
     const [isLoading, setIsLoading] = useState(true)
-    const [users, setUsers] = useState<IUser[]>()
+    const [users, setUsers] = useState<IUserTable[]>()
     useEffect(() => {
         getBlockUsers()
     }, []);
@@ -59,6 +66,7 @@ export default function SellerBanUsers({seller_id}: { seller_id: number | undefi
                     <TableHeader>
                         <TableColumn key="avatar">Аватар</TableColumn>
                         <TableColumn key="ім'я">Ім'я</TableColumn>
+                        <TableColumn key="дата">Дата блокування</TableColumn>
                         <TableColumn key="дія">Дія</TableColumn>
                     </TableHeader>
                     <TableBody items={users}>
@@ -69,6 +77,7 @@ export default function SellerBanUsers({seller_id}: { seller_id: number | undefi
                             >
                                 <TableCell><ClickableAvatar path={item.image_url}/></TableCell>
                                 <TableCell>{item.username}</TableCell>
+                                <TableCell>{convertToKyivTime(item.date_created)}</TableCell>
                                 <TableCell>
                                     <Button color="success" variant="solid"
                                             onClick={() => handleUnblockUser(item.user_id, item.username)}>

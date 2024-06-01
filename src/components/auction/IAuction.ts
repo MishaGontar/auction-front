@@ -9,6 +9,7 @@ export interface IAuction {
     seller_name: string,
     seller_img_path: string,
     date_created: string,
+    date_finished: string,
     is_owner?: boolean
 }
 

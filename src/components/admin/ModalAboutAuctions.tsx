@@ -78,6 +78,14 @@ export default function ModalAboutAuction({data, dataList, onClose, handleClick}
                                     </span>
                                 {convertToKyivTime(auction.date_created)}
                             </li>
+                            {auction.date_finished &&
+                                <li className={`py-1`}>
+                                    <span className="font-semibold mx-0.5">
+                                        Дата закінчення:
+                                    </span>
+                                    {convertToKyivTime(auction.date_finished)}
+                                </li>
+                            }
                         </ul>
                     </div>
                 </ModalBody>

@@ -2,8 +2,8 @@ import {useAuth} from "../../provider/AuthProvider.tsx";
 import {useNavigate, useParams} from "react-router-dom";
 import {ChangeEvent, useEffect, useState} from "react";
 import axios from "axios";
-import {IMAGE_SIZE_STYLE, MAIN_BOX_CONTAINER, SERVER_URL, SMALL_BOX_CARD} from "../../constans.ts";
-import {capitalizeFirstLetter, ColorType, getInfoStatusById,} from "../../utils/CustomUtils.ts";
+import {IMAGE_SIZE_STYLE, MAIN_BOX_CONTAINER, SERVER_URL, SMALL_BOX_CARD, TEXT_STYLE} from "../../constans.ts";
+import {capitalizeFirstLetter, ColorType, convertToKyivTime, getInfoStatusById,} from "../../utils/CustomUtils.ts";
 import SpinnerView from "../template/Spinner.tsx";
 import {IAuction} from "./IAuction.ts";
 import {Button, Card, CardBody, CardHeader, Image, Input, Link, Select, SelectItem, Textarea} from "@nextui-org/react";
@@ -150,7 +150,7 @@ export default function AuctionPage() {
     }
 
     function getStatuses() {
-        axios.get(`${SERVER_URL}/auction/create_statuses`, getAuthConfig())
+        axios.get(`${SERVER_URL}/auction/status`, getAuthConfig())
             .then(response => setStatuses(response.data.statuses))
             .catch(error => sendErrorNotify(getErrorMessage(error)))
             .finally(() => setIsLoading(false))
@@ -301,7 +301,8 @@ export default function AuctionPage() {
                         <h4 className=" text-balance font-bold text-large flex justify-center">{auction?.auction_name}</h4>
                         <p className="text-tiny font-sans my-2">{auction?.auction_description}</p>
                         <div className="flex justify-between my-2">
-                            <CustomChip color={color} text={auction?.auction_status}/>
+                            <CustomChip color={color}
+                                        text={`${auction?.auction_status}`}/>
                             <div className="flex justify-center items-center space-x-1.5">
                                 <Link className="hover:cursor-pointer"
                                       size="sm"
@@ -312,20 +313,29 @@ export default function AuctionPage() {
                                 </Link>
                             </div>
                         </div>
+                        {auction?.date_finished &&
+                            <div className={`flex justify-center text-small ${TEXT_STYLE}`}>
+                                <p>Завершено: {convertToKyivTime(auction?.date_finished)}</p>
+                            </div>
+                        }
                     </>}
 
                     {auction?.is_owner && <>
                         {isEditMode && <>
-                            <Button color="warning" className="my-2" onClick={handleSaveAuction}>
+                            <Button color="warning" className="mb-2" onClick={handleSaveAuction}>
                                 Зберегти зміни
                             </Button>
-                            <Button color="default" className="my-2" onClick={handleCancelAuction}>
+                            <Button color="default" className="mb-2" onClick={handleCancelAuction}>
                                 Відхилити
                             </Button>
                         </>
                         }
                         {!isEditMode &&
-                            <Button color="success" onClick={handleEditAuction}>Редагувати аукціон</Button>
+                            <Button color="success"
+                                    className="my-2"
+                                    onClick={handleEditAuction}>
+                                Редагувати аукціон
+                            </Button>
                         }
                         <ButtonModalConfirmDelete object={"аукціон"} onAccept={handleDeleteAuction}/>
                     </>
@@ -335,7 +345,7 @@ export default function AuctionPage() {
             <Card className="lg:basis-2/4 flex flex-col">
                 <CardHeader className="pb-0 pt-2 px-4 flex sm:justify-between sm:flex-row flex-col">
                     <p className="text-2xl font-bold"> Лоти аукціону :</p>
-                    {auction?.is_owner &&
+                    {auction?.is_owner && auction.auction_status_id !== 5 &&
                         <Button onClick={() => setShowModal(true)}
                                 className=" sm:m-0 my-2"
                                 color="primary">

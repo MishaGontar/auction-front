@@ -1,6 +1,6 @@
 import {Image} from "@nextui-org/react";
 import {getImagePath} from "../../utils/ImageUtils.ts";
-import {convertToOnlyData, getInfoStatusById} from "../../utils/CustomUtils.ts";
+import {convertToKyivTime, convertToOnlyData, getInfoStatusById} from "../../utils/CustomUtils.ts";
 import {useNavigate} from "react-router-dom";
 import {IAuction} from "./IAuction.ts";
 import {IMAGE_SIZE_STYLE, TEXT_STYLE} from "../../constans.ts";
@@ -40,8 +40,13 @@ export default function AuctionCard({auction}: AuctionCardProps) {
                                 text={auction.auction_status}/>
                 </div>
                 <div className={`${TEXT_STYLE} my-1.5`}>
-                    Дата: {convertToOnlyData(auction.date_created)}
+                    Дата створення: {convertToOnlyData(auction.date_created)}
                 </div>
+                {auction.date_finished &&
+                    <div className={`${TEXT_STYLE} my-1.5`}>
+                        Дата завершення: {convertToKyivTime(auction.date_finished)}
+                    </div>
+                }
             </div>
         </div>
     )

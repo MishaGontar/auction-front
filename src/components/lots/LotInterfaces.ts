@@ -23,6 +23,7 @@ export interface ILotPageResponse {
     lot_bank_card_number: string,
     lot_monobank_link: string,
     lot_date_created: string,
+    lot_date_finished: string,
     seller_id: number,
     seller_full_name: string,
     seller_img_path: string,
@@ -34,6 +35,7 @@ export interface ILotPageResponse {
 
 export interface ILotDashResponse extends ILotPageResponse {
     images: IImage[]
+    winner: IWinner;
 }
 
 export interface ILotData {

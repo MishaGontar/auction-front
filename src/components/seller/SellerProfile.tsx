@@ -37,7 +37,7 @@ export default function SellerProfile() {
                 if (user?.seller_id === sellerData.seller_id) {
                     setAuctions(auctionsData);
                 } else {
-                    setAuctions(auctionsData.filter((a: IAuction) => a.auction_status_id === 1));
+                    setAuctions(auctionsData.filter((a: IAuction) => a.auction_status_id === 1 || a.auction_status_id === 5));
                 }
             })
             .catch(error => {
@@ -71,7 +71,7 @@ export default function SellerProfile() {
                              </div>
                          }
                     >
-                        <SellerAllAuctions auctions={auctions}/>
+                        <SellerAllAuctions auctions={auctions} isOwner={isOwner}/>
                     </Tab>
                     <Tab key="auctions2"
                          title={
@@ -85,7 +85,7 @@ export default function SellerProfile() {
                     </Tab>
                 </Tabs>
             </div>}
-            {!isOwner && <SellerAllAuctions auctions={auctions}/>}
+            {!isOwner && <SellerAllAuctions auctions={auctions} isOwner={isOwner}/>}
             <Card className={`${SMALL_BOX_CARD} order-first sm:order-last`}>
                 <div className="flex flex-col items-center">
                     <CardHeader className="flex flex-col items-center">
@@ -94,7 +94,7 @@ export default function SellerProfile() {
                                  className="w-[150px] h-auto rounded"/>
                         </ImageModal>
                     </CardHeader>
-                    <div className="mx-1.5">
+                    <div className="mx-3">
                         <h1 className={TEXT_STYLE}><strong>Продавець : </strong> {seller?.full_name}</h1>
                         <p className={TEXT_STYLE}><strong>Опис: </strong> {seller?.description}</p>
                         <p className={TEXT_STYLE}><strong>Соціальні мережі: </strong> {seller?.social_media}</p>

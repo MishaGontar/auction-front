@@ -39,10 +39,10 @@ export default function UserBetCard({bet}: UserBetCardProps) {
                     {bet.lot_name}
                 </div>
                 <div className="my-1.5">
-                    <strong>Твоя ставка : </strong> {formatNumberWithSpaces(bet.amount.toString())} грн
+                    <strong>Сума: </strong> {formatNumberWithSpaces(bet.amount.toString())} грн
                 </div>
                 <div className={`${TEXT_STYLE} my-1.5`}>
-                    Дата: {convertToKyivTime(bet.date_created)}
+                    Дата ставки: {convertToKyivTime(bet.date_created)}
                 </div>
             </div>
         </div>

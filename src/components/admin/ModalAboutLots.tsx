@@ -4,7 +4,7 @@ import {useEffect, useState} from "react";
 import {IData} from "./AuctionsLotsAdminTable.tsx";
 import CustomChip from "../template/CustomChip.tsx";
 import {convertToKyivTime, formatNumberWithSpaces} from "../../utils/CustomUtils.ts";
-import {ILotPageResponse} from "../lots/LotInterfaces.ts";
+import {ILotDashResponse} from "../lots/LotInterfaces.ts";
 import ButtonModalConfirmDelete from "../template/ButtonModalConfirmDelete.tsx";
 import ImagesSlider from "../template/ImagesSlider.tsx";
 import axios from "axios";
@@ -24,7 +24,7 @@ interface ModalProps {
 export default function ModalAboutLot({data, onClose, handleClick}: ModalProps) {
     const [loading, setLoading] = useState(true);
     const [images, setImages] = useState<IImage[]>([]);
-    const lot: ILotPageResponse = data.data as ILotPageResponse;
+    const lot: ILotDashResponse = data.data as ILotDashResponse;
 
     useEffect(() => {
         setLoading(true)
@@ -69,8 +69,15 @@ export default function ModalAboutLot({data, onClose, handleClick}: ModalProps) 
                                                value={lot.auction_name}/>
                                 <NameValueView name="Статус:"
                                                value={<CustomChip color={data.status.color} text={data.status.name}/>}/>
-                                <NameValueView name="Поточна сума:"
-                                               value={formatNumberWithSpaces(lot.lot_amount.toString())}/>
+                                <NameValueView name="Початкова сума:"
+                                               value={formatNumberWithSpaces(lot.lot_amount.toString()) + " грн"}/>
+                                {lot.winner && (<>
+                                    <NameValueView name="Переможець:"
+                                                   value={lot.winner.username ?? "Невідомо (остання ставка власника)"}/>
+                                    <NameValueView name="Фінальна ставка:"
+                                                   value={formatNumberWithSpaces(lot.winner.amount.toString()) + " грн"}/>
+                                </>)
+                                }
                                 {lot.lot_monobank_link &&
                                     <NameValueView name="Посилання на Monobank банку:"
                                                    value={lot.lot_monobank_link}/>

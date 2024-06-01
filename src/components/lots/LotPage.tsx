@@ -3,8 +3,13 @@ import {useNavigate, useParams} from "react-router-dom";
 import {ChangeEvent, useEffect, useState} from "react";
 import {ILotData, ILotPageResponse} from "./LotInterfaces.ts";
 import axios from "axios";
-import {LARGE_BOX_CARD, MAIN_BOX_CONTAINER, SERVER_URL, SMALL_BOX_CARD} from "../../constans.ts";
-import {convertFormattedAmountToNumber, formatNumberWithSpaces, getInfoStatusById} from "../../utils/CustomUtils.ts";
+import {LARGE_BOX_CARD, MAIN_BOX_CONTAINER, SERVER_URL, SMALL_BOX_CARD, TEXT_STYLE} from "../../constans.ts";
+import {
+    convertFormattedAmountToNumber,
+    convertToKyivTime,
+    formatNumberWithSpaces,
+    getInfoStatusById
+} from "../../utils/CustomUtils.ts";
 import SpinnerView from "../template/Spinner.tsx";
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
@@ -213,6 +218,11 @@ export default function LotPage() {
                                 </div>
                                 <CustomChip color={lot.status.color} text={lot.status.name}/>
                             </div>
+                            {lot.lot.lot_date_finished &&
+                                <div className={`flex justify-center text-small ${TEXT_STYLE}`}>
+                                    <p>Завершено: {convertToKyivTime(lot.lot.lot_date_finished)}</p>
+                                </div>
+                            }
                         </CardBody>
                     </Card>
                     <Card className={LARGE_BOX_CARD}>
@@ -301,10 +311,12 @@ export default function LotPage() {
                                                 variant="light" color="success" className="sm:w-1/3 w-full mx-3.5">
                                             Редагувати лот
                                         </Button>
-                                        <Button onClick={submitFinishLot}
-                                                variant="light" color="danger" className="sm:w-1/3 w-full mx-3.5">
-                                            Завершити лот
-                                        </Button>
+                                        {bets.length > 0 &&
+                                            <Button onClick={submitFinishLot}
+                                                    variant="light" color="danger"
+                                                    className="sm:w-1/3 w-full mx-3.5">
+                                                Завершити лот
+                                            </Button>}
                                     </div>
                                 )}
                             </>)

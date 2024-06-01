@@ -46,18 +46,22 @@ export default function Auctions() {
                 }
                 {auctions?.map((auction, index) => (
                     <Card shadow="sm"
-                          className={"h-full"}
+                          className={`h -full`}
                           key={index}
                           isPressable
                           onPress={() => navigate(`/auction/${auction.auction_id}`)}>
-                        <CardBody>
+                        {auction.auction_status_id === 5 && <div
+                            className="absolute left-3/4 top-1/3 -translate-x-1/2 -translate-y-1/2 bg-green-400 px-96 transform rotate-45 z-10 text-3xl font-bold">
+                            Завершився
+                        </div>}
+                        <CardBody className={auction.auction_status_id === 5 ? "opacity-70" : ""}>
                             <div className="flex justify-center">
                                 <Image
                                     shadow="sm"
                                     radius="lg"
                                     sizes="sm"
                                     alt={auction.auction_img_path}
-                                    className={IMAGE_SIZE_STYLE}
+                                    className={`${IMAGE_SIZE_STYLE} z-0`}
                                     src={getImagePath(auction.auction_img_path)}
                                 />
                             </div>
