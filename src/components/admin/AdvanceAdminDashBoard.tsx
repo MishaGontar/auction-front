@@ -1,9 +1,10 @@
 import AdminPage from "./AdminPage.tsx";
 import {Tab, Tabs} from "@nextui-org/react";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import SellerAdminTable from "./SellerAdminTable.tsx";
 import UserAdminTable from "./UsersAdminTable.tsx";
 import AuctionsLotsAdminTable from "./AuctionsLotsAdminTable.tsx";
+import useTitle from "../../hooks/TitleHook.tsx";
 
 const columns = [
     {name: "Продавці", icon: "/paper-24.png", children: <SellerAdminTable/>},
@@ -12,11 +13,9 @@ const columns = [
 ]
 
 export default function AdvanceAdminDashBoard() {
+    useTitle('Адміністративна панель');
     const [selected, setSelected] = useState(columns[0].name);
 
-    useEffect(() => {
-        document.title = "Адміністративна панель";
-    }, []);
     return (
         <AdminPage>
             <div className="flex w-full justify-center items-center flex-col my-5">

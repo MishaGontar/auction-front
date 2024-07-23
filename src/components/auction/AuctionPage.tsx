@@ -1,8 +1,8 @@
 import {useAuth} from "../../provider/AuthProvider.tsx";
 import {useNavigate, useParams} from "react-router-dom";
-import {ChangeEvent, useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import axios from "axios";
-import {IMAGE_SIZE_STYLE, MAIN_BOX_CONTAINER, SERVER_URL, SMALL_BOX_CARD, TEXT_STYLE} from "../../constans.ts";
+import {IMAGE_SIZE_STYLE, MAIN_BOX_CONTAINER, SMALL_BOX_CARD, TEXT_STYLE} from "../../constans.ts";
 import {capitalizeFirstLetter, ColorType, convertToKyivTime, getInfoStatusById,} from "../../utils/CustomUtils.ts";
 import SpinnerView from "../template/Spinner.tsx";
 import {IAuction} from "./IAuction.ts";
@@ -10,7 +10,6 @@ import {Button, Card, CardBody, CardHeader, Image, Input, Link, Select, SelectIt
 import LotCardBody from "../lots/LotCardBody.tsx";
 import ModalLotForm from "../lots/ModalLotForm.tsx";
 import {ILot} from "../lots/LotInterfaces.ts";
-import {PlusLogo} from "../../icons/PlusLogo.tsx";
 import ButtonModalConfirmDelete from "../template/ButtonModalConfirmDelete.tsx";
 import {IStatus} from "../../utils/IStatus.ts";
 import {getAuthConfig, getAuthFormDataConfig} from "../../utils/TokenUtils.ts";
@@ -20,26 +19,29 @@ import {checkImageFile, getImagePath} from "../../utils/ImageUtils.ts";
 import CustomChip from "../template/CustomChip.tsx";
 import SmallAvatar from "../template/SmallAvatar.tsx";
 import ImageModal from "../template/ImageModal.tsx";
+import useTitle from "../../hooks/TitleHook.tsx";
+import {usePage} from "../page/PageContext.tsx";
+import PlusLogo from "../../icons/PlusLogo.tsx";
 
 export default function AuctionPage() {
-    const [isLoading, setIsLoading] = useState(true)
+    useTitle('Інформація про аукціон')
+
     const [auction, setAuction] = useState<IAuction | null>()
     const [lots, setLots] = useState<ILot[] | null>()
     const [color, setColor] = useState<ColorType>("default")
     const [showModal, setShowModal] = useState(false);
+
     const navigate = useNavigate();
     const {user} = useAuth()
     const {id} = useParams();
+    const {isLoading, setIsLoading} = usePage()
 
     const [newAuction, setNewAuction] = useState<IAuction | null>()
     const [selectedNewImage, setSelectedNewImage] = useState<File | null>(null);
     const [statuses, setStatuses] = useState<IStatus[]>([])
     const [isEditMode, setIsEditMode] = useState(false)
 
-    useEffect(() => {
-        document.title = 'Інформація про аукціон'
-        getInfoAuction()
-    }, [user]);
+    useEffect(() => getInfoAuction(), [user]);
 
     useEffect(() => {
         setNewAuction(auction)
@@ -57,7 +59,7 @@ export default function AuctionPage() {
 
     function getInfoAuction() {
         setIsLoading(true)
-        axios.get(`${SERVER_URL}/auction/info/${id}`, getAuthConfig())
+        axios.get(`/auction/info/${id}`, getAuthConfig())
             .then((response) => {
                 const auction_data = response.data.auction
                 setAuction({
@@ -78,21 +80,16 @@ export default function AuctionPage() {
 
     function getAllLots() {
         setIsLoading(true)
-        axios.get(`${SERVER_URL}/auction/${id}/lots`, getAuthConfig())
+        axios.get(`/auction/${id}/lots`, getAuthConfig())
             .then((response) => {
-                if (auction?.is_owner) {
-                    setLots(response.data.lots)
-                } else {
-                    setLots(response.data.lots.filter((l: ILot) => l.status_id !== 3 && l.status_id !== 2))
-                }
+                const result_lots = auction?.is_owner
+                    ? response.data.lots
+                    : response.data.lots.filter((l: ILot) => l.status_id !== 3 && l.status_id !== 2)
+                setLots(result_lots)
             })
             .catch(error => {
-                if (error.response.status === 403) {
-                    sendErrorNotify(getErrorMessage(error))
-                    navigate('/auctions')
-                    return
-                }
                 sendErrorNotify(getErrorMessage(error))
+                if (error.response.status === 403) navigate('/auctions')
             })
             .finally(() => setIsLoading(false))
     }
@@ -135,7 +132,7 @@ export default function AuctionPage() {
 
         setIsLoading(true)
         axios
-            .post(`${SERVER_URL}/update/auction`, form, getAuthFormDataConfig())
+            .post(`/update/auction`, form, getAuthFormDataConfig())
             .then(() => getInfoAuction())
             .catch(error => sendErrorNotify(getErrorMessage(error)))
             .finally(() => setIsLoading(false));
@@ -150,7 +147,7 @@ export default function AuctionPage() {
     }
 
     function getStatuses() {
-        axios.get(`${SERVER_URL}/auction/status`, getAuthConfig())
+        axios.get(`/auction/status`, getAuthConfig())
             .then(response => setStatuses(response.data.statuses))
             .catch(error => sendErrorNotify(getErrorMessage(error)))
             .finally(() => setIsLoading(false))
@@ -158,7 +155,7 @@ export default function AuctionPage() {
 
     function handleDeleteAuction() {
         setIsLoading(true)
-        axios.delete(`${SERVER_URL}/delete/auction/${auction?.auction_id}`, getAuthConfig())
+        axios.delete(`/delete/auction/${auction?.auction_id}`, getAuthConfig())
             .then(() => {
                 sendSuccessfulNotify("Аукціон видалився успішно")
                 navigate('/auctions')
@@ -171,7 +168,7 @@ export default function AuctionPage() {
         getAllLots()
     }
 
-    const handleInputChange = (field: keyof IAuction, e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const handleInputChange = (field: keyof IAuction, e: any) => {
         setNewAuction((prev) => {
             if (!prev) return prev
             return {
@@ -185,7 +182,7 @@ export default function AuctionPage() {
         setSelectedNewImage(null)
     };
 
-    const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const handleImageChange = (e: any) => {
         const file: File | undefined = e.target.files?.[0];
         if (!file) {
             return

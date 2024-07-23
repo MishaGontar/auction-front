@@ -3,14 +3,13 @@ import {getInfoStatusById} from "../../utils/CustomUtils.ts";
 import {ILot} from "./LotInterfaces.ts";
 import {useNavigate} from "react-router-dom";
 import axios from "axios";
-import {SERVER_URL} from "../../constans.ts";
-import {useState} from "react";
 import SpinnerView from "../template/Spinner.tsx";
 import {getErrorMessage} from "../../utils/ErrorUtils.ts";
 import {getAuthConfig} from "../../utils/TokenUtils.ts";
 import {sendErrorNotify, sendSuccessfulNotify} from "../../utils/NotifyUtils.ts";
 import CustomChip from "../template/CustomChip.tsx";
 import {IStatus} from "../../utils/IStatus.ts";
+import {usePage} from "../page/PageContext.tsx";
 
 interface LotCardProps {
     is_owner?: boolean,
@@ -18,22 +17,17 @@ interface LotCardProps {
     onDelete?: () => void,
 }
 
-
 export default function LotCardBody({lot, is_owner, onDelete}: LotCardProps) {
-    const [isLoading, setIsLoading] = useState(false);
+    const {isLoading, setIsLoading} = usePage();
     const navigate = useNavigate();
     const lotInfo: IStatus = getInfoStatusById(lot.status_id);
 
     function deleteLot() {
-
         setIsLoading(true)
-
-        axios.delete(`${SERVER_URL}/delete/lot/${lot.id}`, getAuthConfig())
+        axios.delete(`/delete/lot/${lot.id}`, getAuthConfig())
             .then(() => {
                 sendSuccessfulNotify("Лот видалився успішно")
-                if (onDelete) {
-                    onDelete()
-                }
+                if (onDelete) onDelete()
             })
             .catch(error => sendErrorNotify(getErrorMessage(error)))
             .finally(() => setIsLoading(false))

@@ -1,12 +1,13 @@
 import {Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader} from "@nextui-org/react";
 import {SERVER_URL} from "../../constans.ts";
 import axios from "axios";
-import {useState} from "react";
 import SpinnerView from "../template/Spinner.tsx";
 import {ISeller} from "../seller/ISeller.ts";
 import {getAdminAuthConfig} from "../../utils/TokenUtils.ts";
 import {sendErrorNotify, sendInfoNotify} from "../../utils/NotifyUtils.ts";
 import ImageModal from "../template/ImageModal.tsx";
+import {usePage} from "../page/PageContext.tsx";
+import {useMemo} from "react";
 
 interface SellerModalProps {
     seller: ISeller;
@@ -15,15 +16,15 @@ interface SellerModalProps {
 }
 
 export default function ModalAboutSeller({seller, onClose, onChange}: SellerModalProps) {
-    const [isLoading, setIsLoading] = useState(false);
-    const sellerStatus = seller.seller_status_id;
-    const buttonsVisible = sellerStatus === 1 || sellerStatus === 3
-    const colorStatus = sellerStatus === 3 ? "text-red-600" : ""
+    const {isLoading, setIsLoading} = usePage();
+    const sellerStatus = useMemo(() => seller.seller_status_id, [seller])
+    const buttonsVisible = useMemo(() => sellerStatus === 1 || sellerStatus === 3, [sellerStatus])
+    const colorStatus = useMemo(() => sellerStatus === 3 ? "text-red-600" : "", [sellerStatus])
 
     function changeSellerStatus(action_id: number) {
         setIsLoading(true)
         const action = action_id === 2 ? 'підтвердили' : 'відхилили';
-        axios.post(`${SERVER_URL}/seller/${action_id}`, seller, getAdminAuthConfig())
+        axios.post(`/seller/${action_id}`, seller, getAdminAuthConfig())
             .then(() => sendInfoNotify(`Ми успішно ${action} продавця ${seller.full_name}`))
             .catch(error => sendErrorNotify(error.message))
             .finally(() => {

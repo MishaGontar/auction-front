@@ -10,14 +10,12 @@ import {
     SelectItem,
     Textarea
 } from "@nextui-org/react";
-import {ChangeEvent, FormEvent, useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import SpinnerView from "../template/Spinner.tsx";
 import {IAuction} from "../auction/IAuction.ts";
 import axios from "axios";
-import {SERVER_URL} from "../../constans.ts";
 import {capitalizeFirstLetter,} from "../../utils/CustomUtils.ts";
 import {ILot, ILotData} from "./LotInterfaces.ts";
-import {PlusLogo} from "../../icons/PlusLogo.tsx";
 import UAH from "../../icons/UAH.tsx";
 import {checkImageFile, getImagePath, IImage} from "../../utils/ImageUtils.ts";
 import {IStatus} from "../../utils/IStatus.ts";
@@ -25,6 +23,8 @@ import {getAuthConfig, getAuthFormDataConfig} from "../../utils/TokenUtils.ts";
 import {getErrorMessage} from "../../utils/ErrorUtils.ts";
 import {sendErrorNotify} from "../../utils/NotifyUtils.ts";
 import {validateCardNumber} from "../../utils/CardValidation.ts";
+import {usePage} from "../page/PageContext.tsx";
+import PlusLogo from "../../icons/PlusLogo.tsx";
 
 interface IModalLotProps {
     isOpen: boolean,
@@ -37,8 +37,7 @@ interface IModalLotProps {
 const monobank_start: string = 'https://send.monobank.ua/jar/'
 
 export default function ModalLotForm({isOpen, auction, onSubmit, closeModal, lot}: IModalLotProps) {
-    const [isLoading, setIsLoading] = useState(false)
-    const [error, setError] = useState<string>('');
+    const {isLoading, setIsLoading, error, setError} = usePage();
     const [errorInputCard, setErrorInputCard] = useState({
         monobank: false,
         bank_card: false
@@ -59,13 +58,13 @@ export default function ModalLotForm({isOpen, auction, onSubmit, closeModal, lot
 
     useEffect(() => {
         setIsLoading(true)
-        axios.get(`${SERVER_URL}/auction/create_statuses`, getAuthConfig())
+        axios.get(`/auction/create_statuses`, getAuthConfig())
             .then(response => setStatuses(response.data.statuses))
             .catch(error => setError(getErrorMessage(error)))
             .finally(() => setIsLoading(false))
     }, []);
 
-    function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
+    function handleFileChange(event: any) {
         if (event.target.files && event.target.files.length > 0) {
             const file = event.target.files[0];
 
@@ -91,7 +90,7 @@ export default function ModalLotForm({isOpen, auction, onSubmit, closeModal, lot
         setShowAddButton(true);
     }
 
-    function handleInputChange(field: keyof ILot, e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
+    function handleInputChange(field: keyof ILot, e: any) {
         setErrorInputCard({
             bank_card: false,
             monobank: false,
@@ -102,7 +101,7 @@ export default function ModalLotForm({isOpen, auction, onSubmit, closeModal, lot
         }));
     }
 
-    function handleCardNumberChange(e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
+    function handleCardNumberChange(e: any) {
         setErrorInputCard({
             bank_card: false,
             monobank: false,
@@ -154,7 +153,7 @@ export default function ModalLotForm({isOpen, auction, onSubmit, closeModal, lot
         return false
     }
 
-    async function handleSubmit(e: FormEvent) {
+    async function handleSubmit(e: any) {
         e.preventDefault();
         if (isIncorrectData()) {
             return;
@@ -164,7 +163,6 @@ export default function ModalLotForm({isOpen, auction, onSubmit, closeModal, lot
 
 
     function createLot() {
-
         const form = new FormData();
         form.append('name', lotForm.name);
         form.append('description', lotForm.description);
@@ -189,7 +187,7 @@ export default function ModalLotForm({isOpen, auction, onSubmit, closeModal, lot
         setIsLoading(true)
         const url = lot ? `/update/lot/${lot?.lot.lot_id}` : `/create/lot`
         axios
-            .post(`${SERVER_URL}${url}`, form, getAuthFormDataConfig())
+            .post(`${url}`, form, getAuthFormDataConfig())
             .then(() => onSubmit())
             .catch(error => setError(getErrorMessage(error)))
             .finally(() => setIsLoading(false));
@@ -211,7 +209,7 @@ export default function ModalLotForm({isOpen, auction, onSubmit, closeModal, lot
                         <ModalHeader className="flex flex-col gap-1">
                             {lot ? "Редагувати" : "Створити"} лот
                         </ModalHeader>
-                        {error && <p className="text-xl text-red-500 mb-5 ml-1 ">{error}</p>}
+                        {error && <p className="text-xl text-red-500 mb-5 ml-1">{error}</p>}
                         <ModalBody>
 
                             <Input

@@ -1,5 +1,5 @@
 import AdminPage from "./AdminPage.tsx";
-import {ChangeEvent, useEffect, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import axios from "axios";
 
 import SpinnerView from "../template/Spinner.tsx";
@@ -14,16 +14,17 @@ import {
     TableHeader,
     TableRow
 } from "@nextui-org/react";
-import {SERVER_URL} from "../../constans.ts";
 import ModalAboutSeller from "./ModalAboutSeller.tsx";
 import {ISeller} from "../seller/ISeller.ts";
 import {IStatus} from "../../utils/IStatus.ts";
 import {getAdminAuthConfig} from "../../utils/TokenUtils.ts";
-import {capitalizeFirstLetter} from "../../utils/CustomUtils.ts";
+import {capitalizeFirstLetter, getColorByStatus} from "../../utils/CustomUtils.ts";
 import CustomChip from "../template/CustomChip.tsx";
 import SmallAvatar from "../template/SmallAvatar.tsx";
 import {sendErrorNotify} from "../../utils/NotifyUtils.ts";
 import {getErrorMessage} from "../../utils/ErrorUtils.ts";
+import useTitle from "../../hooks/TitleHook.tsx";
+import {usePage} from "../page/PageContext.tsx";
 
 
 const columns: TableColumn[] = [
@@ -40,17 +41,18 @@ interface TableColumn {
 }
 
 export default function SellerAdminTable() {
+    useTitle('Адміністративна панель')
+
     const [sellers, setSellers] = useState<ISeller[]>([]);
-    const [loading, setLoading] = useState(true);
+    const {loading, setLoading} = usePage();
     const [clickedRow, setClickedRow] = useState<ISeller | undefined>()
     const [searchQuery, setSearchQuery] = useState("");
     const [status, setStatus] = useState<IStatus[]>([])
     const [statusFilter, setStatusFilter] = useState<string[]>([]);
 
     useEffect(() => {
-        document.title = "Адміністративна панель";
         setLoading(true)
-        axios.get(`${SERVER_URL}/sellers/status`, getAdminAuthConfig())
+        axios.get(`/sellers/status`, getAdminAuthConfig())
             .then(response => setStatus(response.data.status))
             .catch(error => sendErrorNotify(getErrorMessage(error)))
             .finally(() => setLoading(false));
@@ -59,7 +61,7 @@ export default function SellerAdminTable() {
 
     function loadSellers() {
         setLoading(true);
-        axios.get(`${SERVER_URL}/sellers`, getAdminAuthConfig())
+        axios.get(`/sellers`, getAdminAuthConfig())
             .then(response => setSellers(response.data.sellers))
             .catch(error => sendErrorNotify(getErrorMessage(error)))
             .finally(() => setLoading(false));
@@ -73,22 +75,16 @@ export default function SellerAdminTable() {
         setClickedRow(undefined)
     }
 
-    function handleSearch(event: ChangeEvent<HTMLInputElement>) {
-        setSearchQuery(event.target.value);
+    function handleSearch(e: any) {
+        setSearchQuery(e.target.value);
     }
 
-    function getColorByStatus(s: number) {
-        if (s === 1) return "warning"
-        if (s === 2) return "success"
-        if (s === 3) return "danger"
-    }
-
-    const handleSelectionChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    const handleSelectionChange = (e: any) => {
         const status: string[] = e.target.value.trim().split(',');
         setStatusFilter(status)
     };
 
-    const filteredSellers = sellers.filter((seller) => {
+    const filteredSellers = useMemo(() => sellers.filter((seller) => {
         const matchFullName = seller.full_name.toLowerCase().includes(searchQuery.toLowerCase());
         const matchEmail = seller.email.toLowerCase().includes(searchQuery.toLowerCase());
         const matchUsername = seller.username.toLowerCase().includes(searchQuery.toLowerCase());
@@ -98,7 +94,7 @@ export default function SellerAdminTable() {
             return isMatch;
         }
         return isMatch && statusFilter.some(s => +s === seller.seller_status_id);
-    });
+    }), [sellers, statusFilter, searchQuery]);
 
     if (loading) {
         return <SpinnerView/>;

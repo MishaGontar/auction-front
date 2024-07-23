@@ -13,38 +13,14 @@ import {
     NavbarMenuItem,
     NavbarMenuToggle
 } from "@nextui-org/react";
-import {ColorTypeSecond,} from "../utils/CustomUtils.ts";
 import {useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
 import axios from "axios";
-import {SERVER_URL} from "../constans.ts";
-import {useAuth} from "../provider/AuthProvider.tsx";
-import {getAdminToken, getAuthConfig, getAuthToken} from "../utils/TokenUtils.ts";
-import {getErrorMessage} from "../utils/ErrorUtils.ts";
+import {SERVER_URL} from "../../constans.ts";
+import {useAuth} from "../../provider/AuthProvider.tsx";
+import {getAdminToken, getAuthConfig, getAuthToken} from "../../utils/TokenUtils.ts";
+import {adminMenuItem, IMenuItem, initMenu, sellerMenuItem} from "./MenuItem.ts";
 
-interface IMenuItem {
-    color: ColorTypeSecond,
-    href: string,
-    name: string,
-    disabled?: boolean
-}
-
-const adminMenuItem: IMenuItem = {
-    color: 'foreground',
-    href: '/admin/dashboard',
-    name: 'Адмін панель'
-}
-
-const sellerMenuItem: IMenuItem = {
-    color: 'foreground',
-    href: '/create/auction',
-    name: 'Створити аукціон'
-}
-const initMenu: IMenuItem = {
-    color: 'foreground',
-    href: '/auctions',
-    name: 'Аукціони'
-}
 export default function Header() {
     const navigator = useNavigate()
     const {user, login, logout} = useAuth()
@@ -66,12 +42,9 @@ export default function Header() {
     }, [isSeller, isAdmin, user]);
 
     useEffect(() => {
-        axios.get(`${SERVER_URL}/user`, getAuthConfig())
-            .then(response => {
-                login(response.data)
-            })
+        axios.get(`/user`, getAuthConfig())
+            .then(response => login(response.data))
             .catch(e => {
-                console.error(getErrorMessage(e))
                 if (e.response.status === 403 || e.response.status === 400) {
                     logout()
                 }

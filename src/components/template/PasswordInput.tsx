@@ -1,7 +1,7 @@
-import {ChangeEvent, InputHTMLAttributes, useState} from "react";
-import {EyeSlashFilledIcon} from "../../icons/EyeSlashFilledIcon.tsx";
-import {EyeFilledIcon} from "../../icons/EyeFilledIcon.tsx";
+import {ChangeEvent, InputHTMLAttributes, useCallback, useState} from "react";
 import {Input} from "@nextui-org/react";
+import EyeFilledIcon from "../../icons/EyeFilledIcon.tsx";
+import EyeSlashFilledIcon from "../../icons/EyeSlashFilledIcon.tsx";
 
 interface IPassword {
     value: string,
@@ -14,7 +14,8 @@ interface IPassword {
 
 export default function PasswordInput({value, onChange, label, isInvalid, errorMessage}: IPassword) {
     const [isVisible, setIsVisible] = useState(false);
-    const toggleVisibility = () => setIsVisible(prevState => !prevState);
+    const toggleVisibility = useCallback(() => setIsVisible(prevState => !prevState), [isVisible]);
+
     return (
         <Input
             required
@@ -25,12 +26,10 @@ export default function PasswordInput({value, onChange, label, isInvalid, errorM
             errorMessage={errorMessage}
             endContent={
                 <button className="focus:outline-none" type="button" onClick={toggleVisibility}>
-                    {isVisible
-                        ? <EyeSlashFilledIcon className="text-2xl text-default-400 pointer-events-none"/>
-                        : <EyeFilledIcon className="text-2xl text-default-400 pointer-events-none"/>
-                    }
+                    {isVisible ? <EyeSlashFilledIcon/> : <EyeFilledIcon/>}
                 </button>
             }
+            data-test-id="form-input-password"
             type={isVisible ? "text" : "password"}
             onChange={onChange}
             width="100%"

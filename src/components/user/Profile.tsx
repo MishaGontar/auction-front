@@ -1,5 +1,5 @@
 import AuthPage from "../auth/AuthPage.tsx";
-import {LARGE_BOX_CARD, MAIN_BOX_CONTAINER, SERVER_URL, SMALL_BOX_CARD, TEXT_STYLE} from "../../constans.ts";
+import {LARGE_BOX_CARD, MAIN_BOX_CONTAINER, SMALL_BOX_CARD, TEXT_STYLE} from "../../constans.ts";
 import {Button, Card, CardBody, CardHeader} from "@nextui-org/react";
 import {useAuth} from "../../provider/AuthProvider.tsx";
 import {getImagePath} from "../../utils/ImageUtils.ts";
@@ -14,19 +14,20 @@ import SpinnerView from "../template/Spinner.tsx";
 import ButtonModalConfirmDelete from "../template/ButtonModalConfirmDelete.tsx";
 import {useNavigate} from "react-router-dom";
 import ImageModal from "../template/ImageModal.tsx";
+import {usePage} from "../page/PageContext.tsx";
 
 
 export default function Profile() {
     const {user, login, logout} = useAuth()
+    const {isLoading, setIsLoading} = usePage()
     const navigator = useNavigate();
 
     const [bets, setBets] = useState<IUserBet[] | null>(null)
-    const [isLoading, setIsLoading] = useState(true)
     const [file, setFile] = useState<(File | null)>(null);
 
     useEffect(() => {
         setIsLoading(true)
-        axios.get(`${SERVER_URL}/user/bets`, getAuthConfig())
+        axios.get(`/user/bets`, getAuthConfig())
             .then(res => {
                 const userBets = res.data.bets;
                 let sortedBets;
@@ -43,7 +44,7 @@ export default function Profile() {
 
     function handleConfirmDelete() {
         setIsLoading(true)
-        axios.delete(`${SERVER_URL}/user/delete`, getAuthConfig())
+        axios.delete(`/user/delete`, getAuthConfig())
             .then(() => {
                 logout()
                 navigator('/auction')
@@ -68,7 +69,7 @@ export default function Profile() {
         }
         const form = new FormData();
         form.append("image", file);
-        axios.post(`${SERVER_URL}/user/photo`, form, getAuthFormDataConfig())
+        axios.post(`/user/photo`, form, getAuthFormDataConfig())
             .then((res) => {
                 sendSuccessfulNotify("Зображення збережено")
                 saveAuthToken(res.data.token)

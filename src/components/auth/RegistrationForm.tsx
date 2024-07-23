@@ -1,49 +1,39 @@
-import {ChangeEvent, useState} from 'react';
+import {useState} from 'react';
 import {Input} from '@nextui-org/react';
 import axios from 'axios';
-import {SERVER_URL} from './../../constans.ts';
 import FormTemplate from '../template/FormTemplate.tsx';
 import PasswordInput from '../template/PasswordInput.tsx';
 import ModalEnterCode from './ModalEnterCode.tsx';
 import {removeMfaToken, saveMfaToken} from "../../utils/TokenUtils.ts";
+import {usePage} from "../page/PageContext.tsx";
+import useInput from "../../hooks/InputHook.tsx";
 
-const initialFormData = {
-    username: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-};
-type FormData = typeof initialFormData;
+export default function RegistrationForm() {
+    const {setIsLoading, setError} = usePage();
 
-const RegistrationForm = () => {
-    const [formData, setFormData] = useState(initialFormData);
-    const [isLoading, setIsLoading] = useState(false);
+    const username = useInput('')
+    const email = useInput('')
+    const password = useInput('')
+    const confirmPassword = useInput('')
 
-    const [error, setError] = useState('');
     const [isNotEqualsPassword, setIsNotEqualsPassword] = useState(false);
-
     const [showModal, setShowModal] = useState(false);
 
-    const handleInputChange = (field: keyof FormData, e: ChangeEvent<HTMLInputElement>) => {
-        setFormData((prev) => ({
-            ...prev,
-            [field]: e.target.value.trim(),
-        }));
-        setIsNotEqualsPassword(false)
-    };
-
     const handleRegistration = () => {
-        const {password, confirmPassword} = formData;
-
-        if (confirmPassword !== password) {
+        if (confirmPassword.value !== password.value) {
             setIsNotEqualsPassword(true)
             return;
         }
 
         setIsLoading(true);
+        const formData = {
+            username: username.value,
+            email: email.value,
+            password: password.value,
+            confirmPassword: confirmPassword.value
+        };
 
-        axios
-            .post(`${SERVER_URL}/registration`, formData)
+        axios.post(`/registration`, formData)
             .then((response) => {
                 saveMfaToken(response.data.token);
                 setShowModal(true);
@@ -52,48 +42,43 @@ const RegistrationForm = () => {
             .finally(() => setIsLoading(false));
     };
 
-    function handleCloseModal(){
+    function handleCloseModal() {
         removeMfaToken();
         setShowModal(false);
     }
 
     return (
         <>
-            {showModal && <ModalEnterCode username_or_email={formData.email} isOpen={showModal} onClose={handleCloseModal}/>}
+            {showModal &&
+                <ModalEnterCode username_or_email={email.value} isOpen={showModal} onClose={handleCloseModal}/>}
             <FormTemplate
                 title="Реєстрація"
                 submitBtnTxt="Зареєструватись"
                 onSubmit={handleRegistration}
-                error={error}
-                isLoading={isLoading}
                 link="/login"
             >
                 <Input
                     required
                     minLength={4}
                     label="Ім'я користувача"
-                    value={formData.username}
-                    onChange={(e) => handleInputChange('username', e)}
+                    {...username.bind}
                 />
                 <Input
                     required
                     type="email"
                     minLength={10}
                     label="Електрона адреса"
-                    value={formData.email}
-                    onChange={(e) => handleInputChange('email', e)}
+                    {...email.bind}
                     className={"mt-2"}
                 />
                 <PasswordInput
                     label="Пароль"
-                    value={formData.password}
-                    onChange={(e) => handleInputChange('password', e)}
+                    {...password.bind}
                     isInvalid={isNotEqualsPassword}
                 />
                 <PasswordInput
                     label="Повторіть пароль"
-                    value={formData.confirmPassword}
-                    onChange={(e) => handleInputChange('confirmPassword', e)}
+                    {...confirmPassword.bind}
                     isInvalid={isNotEqualsPassword}
                     errorMessage="Паролі не співпадають"
                 />
@@ -101,5 +86,3 @@ const RegistrationForm = () => {
         </>
     );
 };
-
-export default RegistrationForm;

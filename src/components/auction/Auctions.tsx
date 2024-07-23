@@ -3,35 +3,32 @@ import {useEffect, useState} from "react";
 import axios from "axios";
 import {useAuth} from "../../provider/AuthProvider.tsx";
 import {IAuction} from "./IAuction.ts";
-import {IMAGE_SIZE_STYLE, SERVER_URL} from "../../constans.ts";
+import {IMAGE_SIZE_STYLE} from "../../constans.ts";
 import SpinnerView from "../template/Spinner.tsx";
 import {useNavigate} from "react-router-dom";
 import {getAuthConfig} from "../../utils/TokenUtils.ts";
 import {getErrorMessage} from "../../utils/ErrorUtils.ts";
 import {sendErrorNotify} from "../../utils/NotifyUtils.ts";
 import {getImagePath} from "../../utils/ImageUtils.ts";
+import {usePage} from "../page/PageContext.tsx";
+import useTitle from "../../hooks/TitleHook.tsx";
 
 export default function Auctions() {
-    const [auctions, setAuctions] = useState<IAuction[]>()
-    const [isLoading, setIsLoading] = useState(true)
+    useTitle('Аукціони')
 
+    const [auctions, setAuctions] = useState<IAuction[]>()
+
+    const {isLoading, setIsLoading} = usePage()
     const navigate = useNavigate();
     const {user} = useAuth();
 
     useEffect(() => {
-        document.title = 'Аукціони'
         setIsLoading(true)
-        if (user) {
-            axios.get(`${SERVER_URL}/auctions/all_auth`, getAuthConfig())
-                .then(response => setAuctions(response.data.auctions))
-                .catch(error => sendErrorNotify(getErrorMessage(error)))
-                .finally(() => setIsLoading(false));
-        } else {
-            axios.get(`${SERVER_URL}/auctions/all`)
-                .then(response => setAuctions(response.data.auctions))
-                .catch(error => sendErrorNotify(getErrorMessage(error)))
-                .finally(() => setIsLoading(false));
-        }
+        const url = user ? '/auctions/all_auth' : '/auctions/all'
+        axios.get(url, getAuthConfig())
+            .then(response => setAuctions(response.data.auctions))
+            .catch(error => sendErrorNotify(getErrorMessage(error)))
+            .finally(() => setIsLoading(false));
     }, [user])
 
     if (isLoading) {
