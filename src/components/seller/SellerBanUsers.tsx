@@ -1,4 +1,4 @@
-import {LARGE_BOX_CARD, SERVER_URL} from "../../constans.ts";
+import {LARGE_BOX_CARD} from "../../constans.ts";
 import {
     Button,
     Card,
@@ -19,6 +19,7 @@ import {sendErrorNotify, sendSuccessfulNotify} from "../../utils/NotifyUtils.ts"
 import {getErrorMessage} from "../../utils/ErrorUtils.ts";
 import ClickableAvatar from "../template/ClickableAvatar.tsx";
 import {convertToKyivTime} from "../../utils/CustomUtils.ts";
+import {usePage} from "../page/PageContext.tsx";
 
 interface IUserTable {
     user_id: number,
@@ -28,15 +29,14 @@ interface IUserTable {
 }
 
 export default function SellerBanUsers({seller_id}: { seller_id: number | undefined }) {
-    const [isLoading, setIsLoading] = useState(true)
-    const [users, setUsers] = useState<IUserTable[]>()
-    useEffect(() => {
-        getBlockUsers()
-    }, []);
+    const {isLoading, setIsLoading} = usePage();
+    const [users, setUsers] = useState<IUserTable[]>([])
+
+    useEffect(() => getBlockUsers(), []);
 
     function getBlockUsers() {
         setIsLoading(true)
-        axios.post(`${SERVER_URL}/seller/users/blocked`, {seller_id: seller_id}, getAuthConfig())
+        axios.post(`/seller/users/blocked`, {seller_id: seller_id}, getAuthConfig())
             .then(res => setUsers(res.data.users))
             .catch(error => sendErrorNotify(getErrorMessage(error)))
             .finally(() => setIsLoading(false));
@@ -44,7 +44,7 @@ export default function SellerBanUsers({seller_id}: { seller_id: number | undefi
 
     function handleUnblockUser(user_id: number, username: string) {
         setIsLoading(true)
-        axios.post(`${SERVER_URL}/seller/users/unblock/${user_id}`, {seller_id: seller_id}, getAuthConfig())
+        axios.post(`/seller/users/unblock/${user_id}`, {seller_id: seller_id}, getAuthConfig())
             .then(() => {
                 sendSuccessfulNotify(`Користувача ${username} було розблаковано`);
                 getBlockUsers()

@@ -3,11 +3,12 @@ import {getImagePath, IImage} from "../../utils/ImageUtils.ts";
 import Slider from "react-slick";
 import ImageModal from "../template/ImageModal.tsx";
 import "./../../../style/slick.css";
+import {useMemo} from "react";
 
 const styleImg = "w-[300px] h-auto cursor-pointer rounded";
 
 export default function ImagesSlider({images}: { images: IImage[] }) {
-    const sliderSettings = {
+    const sliderSettings = useMemo(() => ({
         dots: true,
         infinite: true,
         speed: 500,
@@ -23,7 +24,7 @@ export default function ImagesSlider({images}: { images: IImage[] }) {
             );
         },
         dotsClass: "slick-dots slick-thumb"
-    };
+    }), [images]);
 
     return (
         <div className="pb-5 pt-2 flex justify-center flex-col">

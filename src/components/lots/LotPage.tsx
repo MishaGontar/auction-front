@@ -1,6 +1,6 @@
 import {useAuth} from "../../provider/AuthProvider.tsx";
 import {useNavigate, useParams} from "react-router-dom";
-import {ChangeEvent, useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import {ILotData, ILotPageResponse} from "./LotInterfaces.ts";
 import axios from "axios";
 import {LARGE_BOX_CARD, MAIN_BOX_CONTAINER, SERVER_URL, SMALL_BOX_CARD, TEXT_STYLE} from "../../constans.ts";
@@ -28,12 +28,14 @@ import TableBets from "./TableBets.tsx";
 import {IWinner} from "./IWinner.ts";
 import CustomChip from "../template/CustomChip.tsx";
 import SmallAvatar from "../template/SmallAvatar.tsx";
-
+import {usePage} from "../page/PageContext.tsx";
+import useTitle from "../../hooks/TitleHook.tsx";
 
 const boxStyle = "m-2.5 p-2.5 bg-gray-100 rounded";
 
 export default function LotPage() {
-    const [isLoading, setIsLoading] = useState(false);
+    useTitle('Лот')
+
     const [lot, setLot] = useState<ILotData | null>(null);
     const [bets, setBets] = useState<IBet[]>([])
     const [socket, setSocket] = useState<Socket>()
@@ -43,15 +45,12 @@ export default function LotPage() {
     })
     const [isEdit, setIsEdit] = useState<boolean>(false)
 
+    const {isLoading, setIsLoading} = usePage();
     const {user} = useAuth();
     const {id} = useParams();
     const navigate = useNavigate();
 
-    useEffect(() => {
-        document.title = 'Лот';
-        getLot();
-    }, [user]);
-
+    useEffect(() => getLot(), [user]);
 
     useEffect(() => {
         if (lot?.status.id === 3 && !lot.is_owner) {
@@ -84,7 +83,7 @@ export default function LotPage() {
         };
     }, [lot]);
 
-    const handleUpdatedBet = (json: string) => {
+    function handleUpdatedBet(json: string) {
         const res = JSON.parse(json);
         const newBets: IBet[] = res.bets;
         const winner: IWinner = res.winner;
@@ -101,9 +100,9 @@ export default function LotPage() {
             isMoreThanBet: false
         });
         setBets(newBets);
-    };
+    }
 
-    const handleUpdate = () => {
+    function handleUpdate() {
         if (socket) {
             const sendAmount =
                 (userAmount.amount
@@ -115,10 +114,10 @@ export default function LotPage() {
             }
             socket.emit('updatedBet', sendAmount);
         }
-    };
+    }
 
-    function handleAmountInput(event: ChangeEvent<HTMLInputElement>) {
-        const newAmount = event.target.value.replace(/\D/g, '');
+    function handleAmountInput(e: any) {
+        const newAmount = e.target.value.replace(/\D/g, '');
         setUserAmount({
             amount: formatNumberWithSpaces(newAmount),
             isMoreThanBet: bets.length > 0 && (+newAmount > bets[0].amount)
@@ -127,7 +126,7 @@ export default function LotPage() {
 
     function getLot() {
         setIsLoading(true);
-        axios.get(`${SERVER_URL}/auction/lot/${id}`, getAuthConfig())
+        axios.get(`/auction/lot/${id}`, getAuthConfig())
             .then((response) => {
                 const lot: ILotPageResponse = response.data.lot;
                 const is_owner = lot.seller_id === user?.seller_id;
@@ -158,7 +157,7 @@ export default function LotPage() {
 
     function handleDeleteBet(bet_id: number) {
         setIsLoading(true)
-        axios.delete(`${SERVER_URL}/delete/lot/${lot?.lot.lot_id}/bet/${bet_id}`, getAuthConfig())
+        axios.delete(`/delete/lot/${lot?.lot.lot_id}/bet/${bet_id}`, getAuthConfig())
             .then(() => {
                 if (socket) {
                     socket.emit('updatedBets', lot?.lot.lot_id);

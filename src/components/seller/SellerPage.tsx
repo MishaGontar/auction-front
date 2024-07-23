@@ -1,9 +1,9 @@
 import {useAuth} from "../../provider/AuthProvider.tsx";
-import {ReactNode, useEffect, useState} from "react";
-import {Spinner} from "@nextui-org/react";
+import {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
+import {Spinner} from "@nextui-org/react";
 
-export default function SellerPage({children}: { children: ReactNode }) {
+export default function SellerPage({children}: any) {
     const [isLoading, setIsLoading] = useState(true);
     const [isSeller, setIsSeller] = useState<boolean | null>(null);
     const navigate = useNavigate();

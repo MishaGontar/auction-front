@@ -1,5 +1,4 @@
 import {Modal, ModalBody, ModalContent, ModalFooter, ModalHeader} from "@nextui-org/react";
-import {SERVER_URL} from "../../constans.ts";
 import {useEffect, useState} from "react";
 import {IData} from "./AuctionsLotsAdminTable.tsx";
 import CustomChip from "../template/CustomChip.tsx";
@@ -14,6 +13,7 @@ import SpinnerView from "../template/Spinner.tsx";
 import NameValueView from "../template/NameValueView.tsx";
 import {sendErrorNotify} from "../../utils/NotifyUtils.ts";
 import {getErrorMessage} from "../../utils/ErrorUtils.ts";
+import {usePage} from "../page/PageContext.tsx";
 
 interface ModalProps {
     data: IData;
@@ -22,13 +22,13 @@ interface ModalProps {
 }
 
 export default function ModalAboutLot({data, onClose, handleClick}: ModalProps) {
-    const [loading, setLoading] = useState(true);
+    const {loading, setLoading} = usePage();
     const [images, setImages] = useState<IImage[]>([]);
     const lot: ILotDashResponse = data.data as ILotDashResponse;
 
     useEffect(() => {
         setLoading(true)
-        axios.get(`${SERVER_URL}/lot/images/${lot.lot_id}`, getAdminAuthConfig())
+        axios.get(`/lot/images/${lot.lot_id}`, getAdminAuthConfig())
             .then(res => setImages(res.data.images))
             .catch(error => sendErrorNotify(getErrorMessage(error)))
             .finally(() => setLoading(false));

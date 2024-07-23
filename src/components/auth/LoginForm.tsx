@@ -1,54 +1,40 @@
-import {ChangeEvent, useEffect, useState} from 'react';
+import {useState} from 'react';
 import {Input} from '@nextui-org/react';
 import axios from 'axios';
 import PasswordInput from '../template/PasswordInput.tsx';
 import FormTemplate from '../template/FormTemplate.tsx';
 import ModalEnterCode from './ModalEnterCode.tsx';
-import {SERVER_URL} from "../../constans.ts";
 import {removeMfaToken, saveMfaToken} from "../../utils/TokenUtils.ts";
 import {getErrorMessage} from "../../utils/ErrorUtils.ts";
-
-interface FormData {
-    login: string;
-    password: string;
-}
+import {usePage} from "../page/PageContext.tsx";
+import useTitle from "../../hooks/TitleHook.tsx";
+import useInput from "../../hooks/InputHook.tsx";
 
 export default function LoginForm() {
-    const [formData, setFormData] = useState<FormData>({
-        login: '',
-        password: '',
-    });
-    const [error, setError] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
+    useTitle('Вхід');
+
+    const login = useInput('')
+    const password = useInput('')
+    const {setIsLoading, setError} = usePage();
     const [showModal, setShowModal] = useState(false);
-
-    useEffect(() => {
-        document.title = 'Вхід';
-    }, []);
-
-    const handleInputChange = (field: keyof FormData, e: ChangeEvent<HTMLInputElement>) => {
-        setFormData((prev) => ({
-            ...prev,
-            [field]: e.target.value.trim(),
-        }));
-    };
 
     const handleLogin = () => {
         setIsLoading(true);
         setError('');
 
+        const formData = {
+            login: login.value,
+            password: password.value,
+        }
+
         axios
-            .post(`${SERVER_URL}/login`, formData)
+            .post(`/login`, formData)
             .then((response) => {
                 saveMfaToken(response.data.token);
                 setShowModal(true);
             })
-            .catch((error) => {
-                setError(getErrorMessage(error));
-            })
-            .finally(() => {
-                setIsLoading(false);
-            });
+            .catch((error) => setError(getErrorMessage(error)))
+            .finally(() => setIsLoading(false));
     };
 
     function handleCloseModal() {
@@ -59,26 +45,21 @@ export default function LoginForm() {
     return (
         <>
             {showModal &&
-                <ModalEnterCode username_or_email={formData.login} isOpen={showModal} onClose={handleCloseModal}/>}
+                <ModalEnterCode username_or_email={login.value} isOpen={showModal} onClose={handleCloseModal}/>}
             <FormTemplate
                 title="Вхід в систему"
                 submitBtnTxt="Вхід"
                 onSubmit={handleLogin}
-                error={error}
-                isLoading={isLoading}
                 link="/registration"
             >
                 <Input
+                    data-test-id="form-input-username"
                     label="Ім'я користувача або електрона пошта"
                     required
                     minLength={4}
-                    value={formData.login}
-                    onChange={(e) => handleInputChange('login', e)}
+                    {...login.bind}
                 />
-                <PasswordInput
-                    value={formData.password}
-                    onChange={(e) => handleInputChange('password', e)}
-                />
+                <PasswordInput {...login.bind}/>
             </FormTemplate>
         </>
     );

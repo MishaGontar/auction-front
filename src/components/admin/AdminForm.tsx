@@ -1,84 +1,60 @@
-import {ChangeEvent, useEffect, useState} from 'react';
+import {useState} from 'react';
 import {Input} from '@nextui-org/react';
 import axios from 'axios';
 import PasswordInput from '../template/PasswordInput.tsx';
 import FormTemplate from '../template/FormTemplate.tsx';
-import {SERVER_URL} from "../../constans.ts";
 import ModalAdminEnterCode from "./ModalAdminEnterCode.tsx";
 import {saveMfaToken} from "../../utils/TokenUtils.ts";
 import {getErrorMessage} from "../../utils/ErrorUtils.ts";
-
-interface AdminFormData {
-    login: string;
-    secure_code: string;
-    password: string;
-}
+import {usePage} from "../page/PageContext.tsx";
+import useTitle from "../../hooks/TitleHook.tsx";
+import useInput from "../../hooks/InputHook.tsx";
 
 export default function AdminLoginForm() {
-    const [formData, setFormData] = useState<AdminFormData>({
-        login: '',
-        secure_code: '',
-        password: '',
-    });
-    const [error, setError] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
+    useTitle('Адмін логін');
+
+    const login = useInput('')
+    const secure_code = useInput('')
+    const password = useInput('')
+
+    const {setIsLoading, setError} = usePage();
     const [showModal, setShowModal] = useState(false);
 
-    useEffect(() => {
-        document.title = 'Адмін логін';
-    }, []);
-
-    const handleInputChange = (field: keyof AdminFormData, e: ChangeEvent<HTMLInputElement>) => {
-        setFormData((prev) => ({
-            ...prev,
-            [field]: e.target.value.trim(),
-        }));
-    };
-
-    const handleLogin = () => {
+    function handleLogin() {
         setIsLoading(true);
         setError('');
+        const formData = {
+            login: login.value.trim(),
+            password: password.value.trim(),
+            secure_code: secure_code.value.trim(),
+        }
 
         axios
-            .post(`${SERVER_URL}/admin/login`, formData)
+            .post(`/admin/login`, formData)
             .then((response) => {
                 saveMfaToken(response.data.token);
                 setShowModal(true);
             })
-            .catch((error) => {
-                setError(getErrorMessage(error));
-            })
-            .finally(() => {
-                setIsLoading(false);
-            });
-    };
+            .catch((error) => setError(getErrorMessage(error)))
+            .finally(() => setIsLoading(false));
+    }
 
     return (
         <>
-            {showModal && <ModalAdminEnterCode username_or_email={formData.login} isOpen={showModal}/>}
+            {showModal && <ModalAdminEnterCode username_or_email={login.value} isOpen={showModal}/>}
             <FormTemplate
                 title="Вхід адміністратора"
                 submitBtnTxt="Вхід"
                 onSubmit={handleLogin}
-                error={error}
-                isLoading={isLoading}
             >
                 <Input
                     label="Логін"
                     required
                     minLength={4}
-                    value={formData.login}
-                    onChange={(e) => handleInputChange('login', e)}
+                    {...login.bind}
                 />
-                <PasswordInput
-                    value={formData.password}
-                    onChange={(e) => handleInputChange('password', e)}
-                />
-                <PasswordInput
-                    label="Код безпеки"
-                    value={formData.secure_code}
-                    onChange={(e) => handleInputChange('secure_code', e)}
-                />
+                <PasswordInput {...password.bind}/>
+                <PasswordInput label="Код безпеки" {...secure_code.bind}/>
             </FormTemplate>
         </>
     );

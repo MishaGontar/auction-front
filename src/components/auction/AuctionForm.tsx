@@ -1,35 +1,31 @@
 import SellerPage from "../seller/SellerPage.tsx";
 import FormTemplate from "../template/FormTemplate.tsx";
-import {ChangeEvent, useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import axios from "axios";
-import {SERVER_URL} from "../../constans.ts";
 import {capitalizeFirstLetter,} from "../../utils/CustomUtils.ts";
 import {useAuth} from "../../provider/AuthProvider.tsx";
 import SpinnerView from "../template/Spinner.tsx";
 import {Input, Select, SelectItem, Textarea} from "@nextui-org/react";
 import {useNavigate} from "react-router-dom";
-import {PlusLogo} from "../../icons/PlusLogo.tsx";
 import {IStatus} from "../../utils/IStatus.ts";
 import {getAuthConfig, getAuthFormDataConfig} from "../../utils/TokenUtils.ts";
 import {getErrorMessage} from "../../utils/ErrorUtils.ts";
 import {sendErrorNotify} from "../../utils/NotifyUtils.ts";
 import {checkImageFile} from "../../utils/ImageUtils.ts";
-
-interface FormData {
-    name: string;
-    description: string;
-    status: string;
-}
+import {usePage} from "../page/PageContext.tsx";
+import useTitle from "../../hooks/TitleHook.tsx";
+import useInput from "../../hooks/InputHook.tsx";
+import PlusLogo from "../../icons/PlusLogo.tsx";
 
 export default function AuctionForm() {
-    const [isLoading, setIsLoading] = useState(true)
-    const [error, setError] = useState("")
+    useTitle('Створити аукціон')
+
+    const {isLoading, setIsLoading, setError} = usePage()
     const [statuses, setStatuses] = useState<IStatus[]>([])
-    const [formData, setFormData] = useState<FormData>({
-        name: '',
-        description: '',
-        status: '',
-    });
+
+    const name = useInput('')
+    const description = useInput('')
+    const status = useInput('')
 
     const {user} = useAuth()
     const navigate = useNavigate();
@@ -40,7 +36,7 @@ export default function AuctionForm() {
         setSelectedImage(null)
     };
 
-    const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const handleImageChange = (e: any) => {
         const file: File | undefined = e.target.files?.[0];
         if (!file) {
             return
@@ -57,26 +53,15 @@ export default function AuctionForm() {
 
     useEffect(() => {
         setIsLoading(true)
-        document.title = 'Створити аукціон';
-        axios.get(`${SERVER_URL}/auction/create_statuses`, getAuthConfig())
+        axios.get(`/auction/create_statuses`, getAuthConfig())
             .then(response => {
                 const data = response.data.statuses;
                 setStatuses(data)
-                setFormData((prev) => ({
-                    ...prev,
-                    status: data[0].name,
-                }));
+                status.setValue(data[0].name)
             })
             .catch(error => setError(getErrorMessage(error)))
             .finally(() => setIsLoading(false))
     }, [user]);
-
-    const handleInputChange = (field: keyof FormData, e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        setFormData((prev) => ({
-            ...prev,
-            [field]: e.target.value,
-        }));
-    };
 
     function handleSubmit() {
         if (!selectedImage) {
@@ -86,14 +71,13 @@ export default function AuctionForm() {
 
         const form = new FormData();
         form.append('image', selectedImage);
-        form.append('name', formData.name);
-        form.append('description', formData.description);
-        const status_id = statuses.find(s => s.name === formData.status)?.id.toString()
-        form.append('status_id', status_id || "1");
+        form.append('name', name.value);
+        form.append('description', description.value);
+        form.append('status_id', statuses.find(s => s.name === status.value)?.id.toString() || "1");
 
         setIsLoading(true)
         axios
-            .post(`${SERVER_URL}/create/auction`, form, getAuthFormDataConfig())
+            .post(`/create/auction`, form, getAuthFormDataConfig())
             .then(response => navigate(`/auction/${response.data.auction_id}`))
             .catch(error => setError(getErrorMessage(error)))
             .finally(() => setIsLoading(false));
@@ -106,10 +90,8 @@ export default function AuctionForm() {
 
     return (<SellerPage>
             <FormTemplate
-                error={error}
                 title="Створити аукціон"
                 onSubmit={handleSubmit}
-                isLoading={isLoading}
                 submitBtnTxt="Створити">
                 <Input
                     label="Назва аукціону"
@@ -117,17 +99,15 @@ export default function AuctionForm() {
                     required
                     minLength={1}
                     className="my-1.5"
-                    value={formData.name}
-                    onChange={(e) => handleInputChange('name', e)}
+                    {...name.bind}
                 />
                 <Textarea
                     isRequired
                     required
                     label="Опис аукціону"
                     minLength={10}
-                    value={formData.description}
                     className="my-1.5"
-                    onChange={(e) => handleInputChange('description', e)}
+                    {...description.bind}
                 />
 
                 <Select
@@ -136,7 +116,7 @@ export default function AuctionForm() {
                     label="Статус"
                     placeholder="Виберіть статус"
                     className="my-1.5"
-                    onChange={(e) => handleInputChange('status', e)}
+                    onChange={status.bind.onChange}
                 >
                     {statuses.map((st) => (
                         <SelectItem key={st.name} value={st.name}>

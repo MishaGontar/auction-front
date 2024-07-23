@@ -2,7 +2,7 @@ import {useAuth} from "../../provider/AuthProvider.tsx";
 import {useNavigate, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import axios from "axios";
-import {MAIN_BOX_CONTAINER, SERVER_URL, SMALL_BOX_CARD, TEXT_STYLE} from "../../constans.ts";
+import {MAIN_BOX_CONTAINER, SMALL_BOX_CARD, TEXT_STYLE} from "../../constans.ts";
 import {sendErrorNotify} from "../../utils/NotifyUtils.ts";
 import {getErrorMessage} from "../../utils/ErrorUtils.ts";
 import SpinnerView from "../template/Spinner.tsx";
@@ -13,32 +13,30 @@ import {getImagePath} from "../../utils/ImageUtils.ts";
 import ImageModal from "../template/ImageModal.tsx";
 import SellerAllAuctions from "./SellerAllAuctions.tsx";
 import SellerBanUsers from "./SellerBanUsers.tsx";
+import {usePage} from "../page/PageContext.tsx";
 
 export default function SellerProfile() {
-    const [isLoading, setIsLoading] = useState(true)
     const [seller, setSeller] = useState<ISellerProfile | null>(null)
     const [auctions, setAuctions] = useState<IAuction[] | null>(null)
     const [isOwner, setIsOwner] = useState(false)
     const [selected, setSelected] = useState("auctions");
 
+    const {isLoading, setIsLoading} = usePage()
     const {user} = useAuth()
     const {id} = useParams()
     const navigator = useNavigate()
 
     useEffect(() => {
         setIsLoading(true);
-        axios.get(`${SERVER_URL}/seller/info/${id}`)
+        axios.get(`/seller/info/${id}`)
             .then(res => {
                 const sellerData = res.data.seller;
-                const auctionsData = res.data.auctions;
-
                 setSeller(sellerData);
                 setIsOwner(user?.seller_id === sellerData.seller_id);
-                if (user?.seller_id === sellerData.seller_id) {
-                    setAuctions(auctionsData);
-                } else {
-                    setAuctions(auctionsData.filter((a: IAuction) => a.auction_status_id === 1 || a.auction_status_id === 5));
-                }
+                const auctionsData = user?.seller_id === sellerData.seller_id
+                    ? res.data.auctions
+                    : res.data.auctions.filter((a: IAuction) => a.auction_status_id === 1 || a.auction_status_id === 5)
+                setAuctions(auctionsData);
             })
             .catch(error => {
                 sendErrorNotify(getErrorMessage(error));

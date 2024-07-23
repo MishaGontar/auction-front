@@ -1,7 +1,5 @@
 import moment from 'moment-timezone';
 import {IStatus} from "./IStatus.ts";
-import {sendInfoNotify} from "./NotifyUtils.ts";
-
 
 export function capitalizeFirstLetter(word: string): string {
     if (!word) return '';
@@ -68,7 +66,8 @@ export function convertToOnlyData(utcDateTime: string): string {
         .format('DD.MM.YYYY');
 }
 
-export function handleCopyText(text: string, sendInfoNotifyMsg: string) {
-    navigator.clipboard.writeText(text)
-        .then(() => sendInfoNotify(sendInfoNotifyMsg))
+export function getColorByStatus(s: number) {
+    if (s === 1) return "warning"
+    if (s === 2) return "success"
+    if (s === 3) return "danger"
 }

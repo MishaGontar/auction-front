@@ -4,7 +4,6 @@ import axios from "axios";
 
 import SpinnerView from "../template/Spinner.tsx";
 import {Input, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow} from "@nextui-org/react";
-import {SERVER_URL} from "../../constans.ts";
 import {getAdminAuthConfig} from "../../utils/TokenUtils.ts";
 import ButtonModalConfirmDelete from "../template/ButtonModalConfirmDelete.tsx";
 import {IAuction} from "../auction/IAuction.ts";
@@ -17,6 +16,7 @@ import {sendErrorNotify, sendSuccessfulNotify} from "../../utils/NotifyUtils.ts"
 import ModalAboutLot from "./ModalAboutLots.tsx";
 import {getErrorMessage} from "../../utils/ErrorUtils.ts";
 import SmallAvatar from "../template/SmallAvatar.tsx";
+import {usePage} from "../page/PageContext.tsx";
 
 
 const columns: TableColumn[] = [
@@ -43,7 +43,7 @@ export interface IData {
 export default function AuctionsLotsAdminTable() {
     const [listData, setListData] = useState<IData[]>([]);
     const [clickedRow, setClickedRow] = useState<IData | undefined>()
-    const [loading, setLoading] = useState(true);
+    const {loading, setLoading} = usePage();
     const [searchQuery, setSearchQuery] = useState("");
 
     useEffect(() => {
@@ -53,7 +53,7 @@ export default function AuctionsLotsAdminTable() {
 
     function loadData() {
         setLoading(true);
-        axios.get(`${SERVER_URL}/auctions_and_lots/all`, getAdminAuthConfig())
+        axios.get(`/auctions_and_lots/all`, getAdminAuthConfig())
             .then(response => {
                 const {auctions, lots} = response.data
                 const newData: IData[] = []
@@ -102,7 +102,7 @@ export default function AuctionsLotsAdminTable() {
 
         const isLot = lot.lot_id !== undefined
         const url = isLot ? `lot/${lot.lot_id}` : `auction/${auction.auction_id}`
-        axios.delete(`${SERVER_URL}/delete/${url}`, getAdminAuthConfig())
+        axios.delete(`/delete/${url}`, getAdminAuthConfig())
             .then(() => {
                 sendSuccessfulNotify(
                     `Видалено ${isLot ? `лот ${lot.lot_name}` : `аукціон ${auction.auction_name}`} успішно!`
