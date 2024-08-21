@@ -17,5 +17,6 @@
 import './commands'
 import "cypress-mailosaur";
 import 'cypress-xpath'
+import "cypress-mailosaur";
 // Alternatively you can use CommonJS syntax:
 // require('./commands')

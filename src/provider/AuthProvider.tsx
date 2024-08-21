@@ -1,5 +1,5 @@
 import {createContext, useContext, useState} from 'react';
-import {IUser} from "../components/user/IUser.ts";
+import {IUser} from "../pages/user/IUser.ts";
 import {removeAllTokens} from "../utils/TokenUtils.ts";
 
 interface AuthContextType {

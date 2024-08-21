@@ -8,7 +8,6 @@ export type ErrorResponse = {
 };
 
 export function getErrorMessage(error: ErrorResponse): string {
-    console.log(error)
     const response = error.response;
     const errorMessage = error.message;
     if (!response) {
