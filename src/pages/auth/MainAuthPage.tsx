@@ -1,17 +1,25 @@
 import {Tab, Tabs} from "@nextui-org/react";
-import {useState} from "react";
-import LoginForm from "./login/LoginForm.tsx";
-import RegistrationForm from "./registration/RegistrationForm.tsx";
+import {lazy, useState} from "react";
+import {usePage} from "../page/PageContext.tsx";
+
+const LoginForm = lazy(() => import("./login/LoginForm.tsx"));
+const RegistrationForm = lazy(() => import("./registration/RegistrationForm.tsx"));
 
 export default function MainAuthPage() {
     const [selected, setSelected] = useState("login");
+    const {setError} = usePage();
+
     return (
         <div className="flex w-full justify-center items-center flex-col my-5">
             <Tabs
                 aria-label="Options"
                 selectedKey={selected}
-                onSelectionChange={(key) => setSelected(key.toString())}
+                onSelectionChange={(key) => {
+                    setError('')
+                    setSelected(key.toString())
+                }}
             >
+
                 <Tab key="login"
                      className="w-full"
                      title={
@@ -34,6 +42,7 @@ export default function MainAuthPage() {
                 >
                     <RegistrationForm/>
                 </Tab>
+
             </Tabs>
         </div>
     )

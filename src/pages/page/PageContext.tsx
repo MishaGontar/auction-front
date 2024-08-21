@@ -12,10 +12,10 @@ export default function PageProvider({children}: any) {
 
     return (
         <PageContext.Provider value={{
-            error: error,
-            isLoading: isLoading,
-            setError: setError,
-            setIsLoading: setIsLoading
+            error,
+            isLoading,
+            setError,
+            setIsLoading
         }}>
             {children}
         </PageContext.Provider>
